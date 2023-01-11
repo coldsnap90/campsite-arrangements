@@ -22,7 +22,7 @@ from park.models import *
 from datetime import datetime
 from park.booked import *
 from selenium import webdriver
-import chromedriver_autoinstaller
+
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
@@ -33,7 +33,7 @@ import random
 
 
 stripe.api_key = Config.STRIPE_SECRET_KEY
-chromedriver_autoinstaller.install()
+
 #login route
 @auth.route('/login',methods =['GET','POST'])
 def login():
