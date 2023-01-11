@@ -1,0 +1,25 @@
+% block content %}
+<title> DataBase entries </title>
+
+<div>
+    <p> User info - 
+    {{data}}
+    </p><br>
+    <p> all bookings - 
+        {{site}}
+    </p><br>
+    <p> Success
+    {{campground}}
+    </p><br>
+    <p> Time
+        {{inner_Campground}}
+    </p>
+
+    <p> all bookings - {% for i in bookings %}
+        <p class = 'accTextInfo'><br> Park: {{i.park}}, site grouping: {{i.campground}}, {{i.inner_Campground}}, site number: {{i.site}},
+                                site type: {{i.site_type}}, {{i.arrival_day}}-{{i.arrival_month}}-{{i.arrival_year}}, Currently Booked: {{i.booked}} </p>
+        {% endfor %}</p>
+
+</div>
+
+

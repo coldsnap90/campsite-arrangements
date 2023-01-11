@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+
+
+
+{% block content %}
+
+   
+    
+    {{super()}}
+    
+    <div class ='container-fluid' id = 'bookingHolder'>
+    <form method = 'POST' action='' name ='value' id = 'bookingForm'>
+        <div class="row">
+            <div class ='col'>
+                    {{form.csrf_token }}
+            </div>
+        </div> 
+        
+                <div class="row mt-3">
+                    <div class = 'col' id = 'bookField'>
+                        {{form.park.label(class = 'text_')}}<br>
+                        {{form.park}}
+                    </div>
+                    <div class = 'col'>
+                        {{form.site_type.label(class = 'text_')}}<br>
+                        {{form.site_type()}}
+                    </div>
+                </div>
+
+                <div class = "row mt-3">
+                    <div class = 'col' id = 'bookField'>
+                        {{form.sites.label(class = 'text_')}}<br>
+                        {{form.sites}}<br>
+                    </div>
+                    <div class = 'col'>
+                        {{form.nights.label(class = 'text_')}}<br>
+                        {{form.nights}}<br>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class = 'col'  id = 'bookField'>
+                        {{form.party_size.label(class = 'text_')}}<br>
+                        <span class = 'formCase'>
+                        {{form.party_size}}
+                        </span>
+                    </div>
+                    <div class = 'col'>
+                        {{form.equiptment.label(class = 'text_')}}<br>
+                        {{form.equiptment}}
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class = 'col' id = 'bookField'>
+                        {{form.arrival_day.label(class = 'text_')}}<br>
+                        {{form.arrival_day}}
+                    </div>
+                    <div class = 'col' >
+                        {{form.arrival_month.label(class = 'text_')}}<br>
+                        {{form.arrival_month()}}
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class = 'col' id = 'bookField'>
+                        {{form.campground.label(class = 'text_')}}<br>
+                        {{form.campground}}
+                    </div>
+                    <div class = 'col' >
+                        {{form.inner_campground.label(class = 'text_')}}<br>
+                        {{form.inner_campground}}
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class = 'col' id = 'bookField'>
+                        {{form.arrival_year.label(class = 'text_')}}<br>
+                        {{form.arrival_year()}}
+                    </div>
+                    <div class = 'col' >
+                        {{form.contact_num.label(class='text_')}}<br>
+                        {{form.contact_num()}}
+                    </div>
+                </div>
+                
+                
+                <div class = "row mt-5">
+                    <div class = 'col' id = 'bookField'>
+                        {{form.email.label(class = 'text_')}}<br>
+                        {{form.email}}
+                    </div>
+                    <div class = 'col'>
+                        {{form.password.label(class = 'text_')}}<br>
+                        {{form.password}}
+                    </div>
+                </div>
+    
+                <div class = "row mt-5">
+                    <div class = 'col' id = 'bookField'>
+                        {{form.billing_address.label(class = 'text_')}}<br>
+                        {{form.billing_address}}
+                    </div>
+                    <div class = 'col'>
+                        {{form.postal_code.label(class = 'text_')}}<br>
+                        {{form.postal_code}}
+                    </div>
+                </div>
+
+                <div class = "row mt-3">
+                    <div class = 'col' id = 'bookField'>
+                        {{form.province.label(class = 'text_')}}<br>
+                        {{form.province}}
+                    </div>
+                    <div class = 'col'>
+                        {{form.country.label(class = 'text_')}}<br>
+                        {{form.country}}
+                    </div>
+                </div>
+                
+                <div class = 'row mt-3'>
+                    <div class = 'col' id = 'bookField'>
+                        {{form.city.label(class ='text_')}}<br>
+                        {{form.city}}
+                    </div>
+                    <div class = 'col'>
+                        {{form.card_name.label(class = 'text_')}}<br>
+                        {{form.card_name}}
+                    </div>
+                </div>
+
+                <div class = 'row mt-3'>
+                    <div class = 'col' id = 'bookField'>
+                        {{form.card.label(class = 'text_')}}<br>
+                        {{form.card}}
+                    </div>
+                    <div class = 'col'>
+                        {{form.code.label(class = 'text_')}}<br>
+                        {{form.code}}
+                    </div>
+                </div>
+
+                <div class = "row mt-3">
+                    <div class = 'col text-center'>
+                        {{form.mm.label(class = 'text_')}}<br>
+                        {{form.mm}}
+                    </div>
+                    <div class = 'col'>
+                        {{form.yy.label(class = 'text_')}}<br>
+                        {{form.yy}}
+                    </div>
+                </div>
+
+        <div class = 'row mt-5 mb-3 text-center'>
+            <div class = 'col-6 offset-2' >
+                {{form.submit(class = 'btn btn-default')}}
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<script type="text/javascript">
+    window.onload = function(){ alert("Please make sure you enter the right information, were not responsible if"+
+    "a site is booked due to incorrect entries")}
+</script>
+<script>
+    var park_select = document.getElementById("park");
+    var sites_select = document.getElementById("sites");
+    var campground_select = document.getElementById("campground");
+    var inner_campground_select = document.getElementById("inner_campground")
+    
+
+    park_select.onchange = function()  {
+        
+
+        park = park_select.value;
+      
+        const url = 'https://webookcamp.herokuapp.com//auth/sited/'
+        fetch(url + park).then(function(response) {
+
+            response.json().then(function(data) {
+              
+                var optionHTML = '';
+                var optionHTML2 ='';
+                var optionHTML3 ='';
+         
+                for (var sites of data.sites) {
+                    optionHTML += '<option value=" '+sites.names +'">' + sites.names + '</option>';
+                    if (sites.inner_campground != null)
+                    {
+                        optionHTML3 += '<option value=" '+sites.inner_campground +'">' + sites.inner_campground + '</option>';
+                    }
+                    if (sites.campground != null)
+                    {
+                        optionHTML2 += '<option value=" '+sites.campground +'">' + sites.campground + '</option>'; 
+                    }
+                }
+                sites_select.innerHTML = optionHTML;
+                campground_select.innerHTML = optionHTML2;
+                inner_campground_select.innerHTML = optionHTML3;
+            })
+            
+        });
+    }
+</script>
+{% endblock %}

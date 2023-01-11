@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+{{super()}}
+<div class ='container-fluid' id = 'formHolder'>
+<form method = 'POST' action='' name ='value'>
+    <div class ='container-fluid'>
+        <div class ='formClass'>
+
+        <div class="row mt-3">
+            <div class = 'col'>
+                    {{resetForm.csrf_token}}
+            </div>
+        </div>
+
+      
+        <div class = 'row mt-3 text-center'> 
+            <div class = 'col'>
+                {{resetForm.password.label}}<br>
+                {{resetForm.password}}
+            </div>
+        </div>
+        <div class = 'row mt-3 text-center'> 
+            <div class = 'col'>
+                {{resetForm.confirm_password.label}}<br>
+                {{resetForm.confirm_password}}
+            </div>
+        </div>
+
+        <div class = 'row mt-3 text-center'> 
+            <div class = 'col' id ='resetBut'>
+                {{resetForm.submit}}
+            </div>
+        </div>
+        
+        
+        
+
+    </div>
+</form>
+</div>
+
+
+
+
+{% endblock %}

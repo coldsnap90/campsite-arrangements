@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+{{super()}}
+
+<div class="container-fluid" id ='store'>
+    <h3 class="text-muted" >Store</h3>
+  </div>
+  {% if book %}
+  <div class="jumbotron">
+    <h1 class="display-3">Subscriptions and Services</h1>
+    <p class="lead">As low as 6$ </p>
+    <p> Your order was successful, click below to return to booking</p>
+  </div>
+  {% endif %}
+  <div class ='container-fluid'>
+    <div class = 'row text-center'>
+        <div class ='col'>
+            <a class="btn btn-primary" href="{{url_for('auth.book')}}" > Return </a>
+        </div>
+    </div>
+  </div>
+  
+  {% endblock %}

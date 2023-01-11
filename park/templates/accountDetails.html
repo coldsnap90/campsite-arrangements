@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {{super()}}
+    
+
+    <div class = 'container-fluid' id = 'accDiv'>
+        <div class = 'row'>
+            <div class ='col text-center'>
+                <img src = "{{url_for('static',filename='images/fire.png')}}" alt ='fire' class ='img-fluid' id="fire1">
+            </div>
+        </div>
+
+
+    {% if bookingBool %}
+
+    <div class row= 'row ' id = 'accHead'>
+            
+        <div class = 'col'>
+            Booking details
+        </div>
+      
+    </div>
+    <div class = 'row rounded mt-3' id = 'accRow' >
+        <div class = 'col' id ='accText'>
+        <u> First Name : </u>
+        <p class = 'accTextInfo'> <br> {{data.firstName}}}  </p>
+        </div>
+        
+    </div>
+    <div class = 'row' id = 'accRow'>
+        <div class = 'col' id ='accText'>
+        <u>Last Name:</u>
+        <p class = 'accTextInfo'> <br>{{data.lastName}} </p>
+        </div>
+    </div>
+    <div class = 'row' id = 'accRow'>
+        <div class = 'col' id ='accText'>
+        <u>Email address:</u>
+        <p class = 'accTextInfo'> <br>{{data.email}}  </p>
+        </div>
+    </div>
+    <div class = 'row' id = 'accRow'>
+        <div class = 'col' id ='accText'>
+        <u>City:</u>
+        <p class = 'accTextInfo'> <br>{{data.city}}  </p>
+        </div>
+    </div>
+    <div class = 'row' id = 'accRow'>
+        <div class = 'col' id ='accText'>
+        <u>Province:</u>
+        <p class = 'accTextInfo'> <br>{{data.province}}  </p>
+    </div>
+    </div>
+    <div class = 'row' id = 'accRow'>
+        <div class = 'col' id ='accText'>
+        <u>Country:</u>
+        <p class = 'accTextInfo'> <br>{{data.country}}  </p>
+        </div>
+    </div>
+    <div class = 'row' id = 'accRow'>
+        <div class = 'col' id ='accText'>
+        <u>Billing Address:</u>
+        <p class = 'accTextInfo'> <br>{{data.billing_address}}  </p>
+        </div>
+    </div>
+    <div class = 'row' id = 'accRow'>
+        <div class = 'col' id ='accText'>
+        {% for i in booking %}
+                <p class = 'accTextInfo'><br> Park: {{i.park}}, site grouping: {{i.campground}}, {{i.inner_Campground}}, site number: {{i.site}},
+                                        site type: {{i.site_type}}, {{i.arrival_day}}-{{i.arrival_month}}-{{i.arrival_year}}, Currently Booked: {{i.booked}} </p>
+        {% endfor %}
+        </div>
+    </div>
+   
+    </div>
+ 
+    
+    {% else %}
+    <div class row= 'row ' id = 'accHead'>
+            
+        <div class = 'col'>
+        Account details
+        </div>
+      
+    </div>
+    <div class = 'row rounded' id = 'accRow'>
+        <div class = 'col' id ='accText'>
+        <u>Account status:</u> 
+        <p class = 'accTextInfo'> <br>{% if data.confirmed == True %} Account Verified {% else %} Account Unverified {% endif%} 
+        </p>
+        </div>
+    </div>
+
+   
+        <div class = 'row rounded mt-3' id = 'accRow' >
+            <div class = 'col' id ='accText'>
+            <u> First Name: </u>
+            <p class = 'accTextInfo'> <br>{{data.firstName}}  </p>
+            </div>
+            
+        </div>
+        <div class = 'row' id = 'accRow'>
+            <div class = 'col' id ='accText'>
+            <u>Last Name:</u>
+            <p class = 'accTextInfo'> <br>{{data.lastName}} </p>
+            </div>
+        </div>
+        <div class = 'row' id = 'accRow'>
+            <div class = 'col' id ='accText'>
+            <u>Email address:</u>
+            <p class = 'accTextInfo'> <br>{{data.email}}  </p>
+            </div>
+        </div>
+        <div class = 'row' id = 'accRow'>
+            <div class = 'col' id ='accText'>
+            <u>City:</u>
+            <p class = 'accTextInfo'> <br>{{data.city}}  </p>
+            </div>
+        </div>
+        <div class = 'row' id = 'accRow'>
+            <div class = 'col' id ='accText'>
+            <u>Province:</u>
+            <p class = 'accTextInfo'> <br>{{data.province}}  </p>
+        </div>
+        </div>
+        <div class = 'row' id = 'accRow'>
+            <div class = 'col' id ='accText'>
+            <u>Country:</u>
+            <p class = 'accTextInfo'> <br>{{data.country}}  </p>
+            </div>
+        </div>
+        <div class = 'row' id = 'accRow'>
+            <div class = 'col' id ='accText'>
+            <u>Billing Address:</u>
+            <p class = 'accTextInfo'> <br>{{data.billing_address}}  </p>
+            </div>
+        </div>
+        <div class = 'row' id = 'accRow'>
+            <div class = 'col' id ='accText'>
+            <u>Subscription:</u>
+            <p class = 'accTextInfo'> <br>{{data.subscription}}  </p>
+            </div>
+        </div>
+        <div class = 'row' id = 'accRow'>
+            <div class = 'col' id ='accText'>
+            <u>Scans:</u>
+            <p class = 'accTextInfo'> <br>{{data.scan}}  </p>
+            </div>
+        </div>
+        <div class = 'row' id ='accRow'>
+            <div class ='col' id ='accText'>
+            <u> Current bookings:</u>
+            {% for i in booking %}
+            <p class = 'accTextInfo'><br>Park: {{i.park}}, site grouping: {{i.campground}}, {{i.inner_Campground}}, site number: {{i.site}},
+                                     site type: {{i.site_type}}, {{i.arrival_day}}-{{i.arrival_month}}-{{i.arrival_year}}, Currently Booked: {{i.booked}}
+            </p>
+            {% endfor %}
+            </div>    
+        </div>
+        <div class = 'row rounded' id = 'accRow'>
+            <div class = 'col' id ='accText'>
+            <u>Account status:</u> 
+            <p class = 'accTextInfo'> <br>{% if data.confirmed == True %} Account Verified {% else %} Account Unverified {% endif%} 
+            </p>
+            </div>
+        </div>
+
+        <div class = 'row text-center mt-3'>
+        <div class = 'col'>
+        <a class = "btn btn-warning" id = 'accUp' href="{{url_for('auth.edit_account_details')}}"> Update Account </a> <br>
+        </div>
+        
+        
+        <div class = 'col'>
+            <a class = "btn btn-warning" id = 'accUp' href="{{url_for('auth.edit_account_details')}}"> Cancel Subscription </a> <br>
+            </div>
+            </div>
+    </div>
+{% endif %}
+{% endblock %}

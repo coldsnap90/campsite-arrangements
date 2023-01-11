@@ -1,0 +1,42 @@
+{% extends 'base.html'%}
+
+{% block content %}
+{{super()}}
+
+
+<div class="container-fluid" id ='store'>
+    <h3 class="text-muted" >Store</h3>
+  </div>
+  
+  <div class="jumbotron">
+    <h1 class="display-3">Subscriptions and Services</h1>
+    <p class="lead">As low as 6$ </p>
+    <div class = 'container-fluid'>
+
+    <div class ='row mt-5'>
+      <div class = 'col text-center'>
+    {% if uncancelled %}
+        <p class ='texts_'> Your subscription could not be cancelled or it doesnt exist, please contact customer support</p>
+    {%  elif cancel %} 
+    <p class ='texts_'> You have cancelled your subscription </p>
+    {% elif scan %}
+    <p class ='texts_'> Your plan has exceeded your maximum concurrent scans, please upgrade </p>
+    {% elif book %}
+    <p class ='texts_'> Your booking was not successful please make another </p>
+    {% else %}
+    <p class ='texts_'> Your order was not successful please click below to redirect</p>
+    {% endif %}
+    </div>
+    </div>
+    
+    <div class = 'row text-center mt-5'>
+      <div class ='col'>
+          <a class="btn btn-primary" href="{{url_for('auth.payment')}}" > Return to payment </a>
+      </div>
+  </div>
+  </div>
+</div>
+
+ 
+
+{% endblock %}

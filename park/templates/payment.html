@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{super()}}
+
+<div class="container-fluid" id ='store'>
+  <h3 class="text-muted" >Store</h3>
+</div>
+
+<div class="container-fluid">
+  <div class = 'row text-center'>
+  <div class = 'col' id = 'jumbotron'>
+    Subscriptions and Services
+  </div>
+  </div>
+  <div class ='row text-center' id = 'price'>
+    <div class="col">As low as 6.00$ 
+      
+    </div>
+  </div>
+
+</div>
+{% if confirmed == False %}
+<div class = 'container-fluid' id = 'cover'>
+<div class ='row'>
+  <div class ='col text-center'>
+      <div id = 'baseDivRow'>  You cannot subscribe without verifying your account first,<br>
+        Hit the button below to verify your account.<br><br>
+       <a href="{{url_for('auth.reset')}}" id="buy_now_btn"> confirm account</a>
+       </div>
+
+  </div>
+</div>
+</div>
+
+
+{% elif errorr %}
+<div class = 'container-fluid' id = 'cover'>
+<div class ='row'>
+  <div class ='col text-center'>
+      <div id = 'baseDivRow'>  You cannot make another subscription without cancelling your previous subscription first </div>
+  </div>
+</div>
+</div>
+ 
+{% else %}
+<div class='container-fluid' id = 'planDiv'>
+  <form method = 'POST' action='' name ='value'>
+  <div class='row'>
+    <div class='col'>
+      <table id='prodTable'>
+        <tr>
+          <th class='tablehead'> Subscription </th>
+          <th class='tablehead'> Price ($) </th>
+          <th class='tablehead'> Order </th>
+        </tr>
+        <tr>
+          <td class='tableData'> Bronze annual </td>
+          <td class='tableData'> 80.00 </td>
+          <td class='tableDataS'> <a href="#" id="buy_now_btn"> {{form.iann_mem_bronze(class="btn btn-primary")}}</a></td>
+        <tr>
+          <td class='tableData'> Silver annual </td>
+          <td class='tableData'> 160.00 </td>
+          <td class='tableDataS'><a href="#" id="buy_now_btn1"> {{form.jann_mem_silver(class="btn btn-primary")}} </a>
+          </td>
+        </tr>
+        <tr>
+          <td class='tableData'> Gold annual </td>
+          <td class='tableData'> 240.00 </td>
+          <td class='tableDataS'><a href="#" id="buy_now_btn2"> {{form.kann_mem_gold(class ="btn btn-primary")}}</a></td>
+        </tr>
+        <tr>
+          <td class='tableData'> Platinum annual </td>
+          <td class='tableData'> 400.00 </td>
+          <td class='tableDataS'><a href="#" id="buy_now_btn3"> {{form.lann_mem_plat(class="btn btn-primary")}}</a></td>
+        </tr>
+        <tr>
+            <td>-</td>
+        </tr>
+        <tr>
+          <td class='tableData'> Bronze monthly</td>
+          <td class='tableData'> 8.00 </td>
+          <td class='tableDataS'><a href="#" id="buy_now_btn3"> {{form.emon_mem_bronze(class="btn btn-primary")}}</a></td>
+        </tr>
+        <tr>
+          <td class='tableData'> Silver monthly</td>
+          <td class='tableData'> 16.00 </td>
+          <td class='tableDataS'><a href="#" id="buy_now_btn4"> {{form.fmon_mem_silver(class="btn btn-primary")}}</a></td>
+        <tr>
+          <td class='tableData'>Gold Monthly</td>
+          <td class='tableData'> 24.00 </td>
+          <td class='tableDataS'><a href="#" id="buy_now_btn5"> {{form.gmon_mem_gold(class="btn btn-primary")}}</a></td>
+        </tr>
+        <tr>
+          <td class='tableData'> Platinum Monthly</td>
+          <td class='tableData'> 32.00 </td>
+          <td class='tableDataS'><a href="#" id="buy_now_btn6"> {{form.hmon_mem_plat(class="btn btn-primary")}}</a></td>
+        </tr>
+        <tr><td>-</td></tr>
+        <tr>
+            <td class='tableData'> Bronze Single</td>
+            <td class = 'tableData'> 8.00 </td>
+            <td class = 'tableDataS'><a href="#" id="buy_now_btn7"> {{form.asingle_bronze(class="btn btn-primary")}}</a></td>
+        </tr>
+          <td class='tableData'> Silver Single</td>
+          <td class = 'tableData'> 10.00 </td>
+          <td class = 'tableDataS'><a href="#" id="buy_now_btn8"> {{form.bsingle_silver(class="btn btn-primary")}}</a></td>
+      </tr>
+      <tr>
+        <td class='tableData'> Gold Single </td>
+        <td class = 'tableData'> 15.00 </td>
+        <td class = 'tableDataS'> <a href="#" id="buy_now_btn9"> {{form.csingle_gold(class="btn btn-primary")}}</a></td>
+    </tr>
+    <tr>
+        <td class='tableData'> Platinum Single </td>
+        <td class = 'tableData'> 20.00 </td>
+        <td class = 'tableDataS'> <a href="#" id="buy_now_btn10"> {{form.dsingle_plat(class="btn btn-primary")}}</a></td>
+    </tr>
+
+      </table>
+
+    </div>
+  </div>
+</form>
+</div>
+
+{% endif %}
+<footer id="payFooter">
+   Store 2022
+
+</footer>
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+  const checkout_public_key = '{{checkout_public_key}}';
+  const checkout_session_id = '{{checkout_session_id}}';
+</script>
+
+<script src="{{ url_for('static', filename='script-noajax.js') }}"></script>
+
+</div>
+{% endblock %}
