@@ -33,7 +33,7 @@ import random
 
 
 stripe.api_key = Config.STRIPE_SECRET_KEY
-
+chromedriver_autoinstaller.install()
 #login route
 @auth.route('/login',methods =['GET','POST'])
 def login():
