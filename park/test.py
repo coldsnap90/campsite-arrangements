@@ -434,6 +434,7 @@ else:
     new_d = datetime.now()
     print(new_d)
 
+print((datetime.now().month + 4)%12) 
 print( ' > ','a'>'i')
 if d2.month > ((datetime.now().month + 4)%12) and d2.year == datetime.now().year:
             date = f'{d2.year}-{d2.month-4}-{d2.day}'
@@ -445,6 +446,6 @@ elif d2.year < datetime.now().year and (d2.month-4) > datetime.now().month:
 
 
 months = {'1':'Jan','2':'Feb','3':'Mar','4':'Apr','5':'May','6':'Jun','7':'Jul','8':'Aug','9':'Sept'}
-month = months['Jan']
-print(month)
-main
+
+
+

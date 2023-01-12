@@ -502,7 +502,7 @@ def tempTasks():
         month = months[account_booking.arrival_month]
         date_booking = datetime(int(account_booking.arrival_year),int(month),int(account_booking.arrival_day),6,59,59,59)
       
-
+        
         if date_booking.month > ((datetime.now().month + 4)%12) and date_booking.year == datetime.now().year:
             print('start 1')
             date_booked = f'{date_booking.year}-{date_booking.month-4}-{date_booking.day}'
@@ -519,7 +519,7 @@ def tempTasks():
             date = f'{date_booking.year+1}-{date_booking.month-4}-{date_booking.day}'
             start_day = f'{date_booked} 06:53:00'
             end_day = f'{date_booked} 19:59:00'
-
+    
         scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[data,account_booking], id=f'{account.id}-{account_booking.park}-{account_booking.site}',start_date=start_day,end_date=end_day,minutes =2,max_instances =1)
         account_booking.logged = True
         db.session.merge(account_booking)
@@ -597,18 +597,25 @@ def schedule_site(*args):
     account_id = args[0]
     b_info = args[1]
     with scheduler.app.app_context():
-        u_info = User.query.filter_by(id=account_id).first()
-        b_info = BookingData.query.filter_by(user_id = account_id).first()
-        s_info = stripe.Customer.retrieve(f'{u_info.cId}')
-        CHROMEDRIVER_PATH = os.environ.get('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
-        GOOGLE_CHROME_BIN = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--headless')
-        #chrome_options.add_argument('--proxy-sever=socks5://127.0.0.1:0000')
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument('--disable-gpu')
-        chrome_options.binary_location = GOOGLE_CHROME_BIN
+        try:
+            
+            driver.window_handles
+            print("Driver has active window.")
+            print("Driver doesn't have active window.")
+            driver.quit()
+        except:
+            u_info = User.query.filter_by(id=account_id).first()
+            b_info = BookingData.query.filter_by(user_id = account_id).first()
+            s_info = stripe.Customer.retrieve(f'{u_info.cId}')
+            CHROMEDRIVER_PATH = os.environ.get('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
+            GOOGLE_CHROME_BIN = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
+            chrome_options = webdriver.ChromeOptions()
+            chrome_options.add_argument('--no-sandbox')
+            chrome_options.add_argument('--headless')
+            #chrome_options.add_argument('--proxy-sever=socks5://127.0.0.1:0000')
+            chrome_options.add_argument("--disable-dev-shm-usage")
+            chrome_options.add_argument('--disable-gpu')
+            chrome_options.binary_location = GOOGLE_CHROME_BIN
 
        # exception for if chromedriver crashes on launch
         try:
@@ -762,8 +769,8 @@ def testBook():
                 db.session.add(newB)
                 db.session.commit()
                 '''
-                newB = BookingData(park ='Porteau Cove',site='6',site_type='campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_month='Jan',arrival_day='6',
-                arrival_year = '2023',nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
+                newB = BookingData(park ='Porteau Cove',site='4',site_type='campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_month='Jan',arrival_day='6',
+                arrival_year = '2023',nights = '3',equiptment = '1 Tent',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
                 party_size='2',contact_num=f'6046141826',booked = False,user_id=data)
                 db.session.add(newB)
                 db.session.commit()
