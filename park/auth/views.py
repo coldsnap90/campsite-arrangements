@@ -601,28 +601,28 @@ def schedule_site(*args):
        b_info = BookingData.query.filter_by(user_id = account_id).first()
        s_info = stripe.Customer.retrieve(f'{u_info.cId}')
      
+    CHROMEDRIVER_PATH = os.environ.get('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
+    GOOGLE_CHROME_BIN = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--headless')
     #chrome_options.add_argument('--proxy-sever=socks5://127.0.0.1:0000')
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument("window-size=1200x600")
-    chrome_options.add_argument("--window-position=0,0")
-    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+  
+    chrome_options.binary_location = GOOGLE_CHROME_BIN
 
   # exception for if chromedriver crashes on launch
     try:
-      browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-    except webdriverexception as e:
+      browser = webdriver.Chrome(CHROMEDRIVER_PATH, chrome_options=chrome_options)
+    except:
           print("\nChrome crashed on launch:")
           print(e)
           print("Trying again in 1 second")
           time.sleep(1)
           driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
           print("Success!\n")
-    except Exception as e:
-          raise Exception(e)
+    
  #caps["pageLoadStrategy"] = "eager"  #  complete
 
     
