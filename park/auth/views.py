@@ -606,7 +606,9 @@ def schedule_site(*args):
        chrome_options.add_argument('--disable-infobars')
        chrome_options.add_argument("--disable-extensions")
        chrome_options.add_argument("--disable-dev-shm-usage")
+       chrome_options.add_argument("--disable-setuid-sandbox") 
        chrome_options.add_argument("--no-sandbox")
+       chrome_options.add_argument("--remote-debugging-port=9222") 
        chrome_options = webdriver.ChromeOptions()
        chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
  #caps["pageLoadStrategy"] = "eager"  #  complete
@@ -616,6 +618,7 @@ def schedule_site(*args):
        waits = wait(browser,20)
        Action = ActionChains(browser)
        time1 = time.time()
+       print('reservation starting')
        book,time2,success,failed_at = reservation(browser,waits,Action,u_info,b_info,s_info)
        btt = bookingTimeTest(None,datetime.now(),success,failed_at,None)
        print('Failed at : ',failed_at)
