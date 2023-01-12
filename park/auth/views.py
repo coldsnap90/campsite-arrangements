@@ -22,7 +22,7 @@ from park.models import *
 from datetime import datetime
 from park.booked import *
 from selenium import webdriver
-from selenium import webdriverexception
+
 
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
