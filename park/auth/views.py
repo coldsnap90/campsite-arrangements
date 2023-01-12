@@ -615,7 +615,6 @@ def schedule_site(*args):
             browser = webdriver.Chrome(CHROMEDRIVER_PATH, chrome_options=chrome_options)
         except:
             print("\nChrome crashed on launch:")
-            print(e)
             print("Trying again in 1 second")
             time.sleep(1)
             driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
