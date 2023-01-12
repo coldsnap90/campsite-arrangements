@@ -597,57 +597,55 @@ def schedule_site(*args):
     account_id = args[0]
     b_info = args[1]
     with scheduler.app.app_context():
-       u_info = User.query.filter_by(id=account_id).first()
-       b_info = BookingData.query.filter_by(user_id = account_id).first()
-       s_info = stripe.Customer.retrieve(f'{u_info.cId}')
-     
-    CHROMEDRIVER_PATH = os.environ.get('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
-    GOOGLE_CHROME_BIN = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--headless')
-    #chrome_options.add_argument('--proxy-sever=socks5://127.0.0.1:0000')
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument('--disable-gpu')
-  
-    chrome_options.binary_location = GOOGLE_CHROME_BIN
+        u_info = User.query.filter_by(id=account_id).first()
+        b_info = BookingData.query.filter_by(user_id = account_id).first()
+        s_info = stripe.Customer.retrieve(f'{u_info.cId}')
+        CHROMEDRIVER_PATH = os.environ.get('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
+        GOOGLE_CHROME_BIN = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--headless')
+        #chrome_options.add_argument('--proxy-sever=socks5://127.0.0.1:0000')
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument('--disable-gpu')
+        chrome_options.binary_location = GOOGLE_CHROME_BIN
 
-  # exception for if chromedriver crashes on launch
-    try:
-      browser = webdriver.Chrome(CHROMEDRIVER_PATH, chrome_options=chrome_options)
-    except:
-          print("\nChrome crashed on launch:")
-          print(e)
-          print("Trying again in 1 second")
-          time.sleep(1)
-          driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-          print("Success!\n")
-    
- #caps["pageLoadStrategy"] = "eager"  #  complete
+       # exception for if chromedriver crashes on launch
+        try:
+            browser = webdriver.Chrome(CHROMEDRIVER_PATH, chrome_options=chrome_options)
+        except:
+            print("\nChrome crashed on launch:")
+            print(e)
+            print("Trying again in 1 second")
+            time.sleep(1)
+            driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+            print("Success!\n")
+        
+    #caps["pageLoadStrategy"] = "eager"  #  complete
 
+        
     
-    if '1'=='1':
-       waits = wait(browser,20)
-       Action = ActionChains(browser)
-       time1 = time.time()
-       print('reservation starting')
-       book,time2,success,failed_at = reservation(browser,waits,Action,u_info,b_info,s_info)
-       btt = bookingTimeTest(None,datetime.now(),success,failed_at,None)
-       print('Failed at : ',failed_at)
-       if book == True:
-                print('Book == True')
-                site = f'{b_info.park}-{b_info.site}'
-                btt.successful_booking(time1,time2,success,site)
-                b_info.booked = True
-                db.session.merge(b_info)
-                db.session.commit()
-                b_info.send_link(u_info,b_info)
-                scheduler.remove_job(id=f'{account_id}-{b_info.park}-{b_info.site}')
-                for job in scheduler.get_jobs():
-                    print("name: %s, trigger: %s, next run: %s, handler: %s" % (
-            job.name, job.trigger, job.next_run_time, job.func))
-                   
-       else:
+        waits = wait(browser,20)
+        Action = ActionChains(browser)
+        time1 = time.time()
+        print('reservation starting')
+        book,time2,success,failed_at = reservation(browser,waits,Action,u_info,b_info,s_info)
+        btt = bookingTimeTest(None,datetime.now(),success,failed_at,None)
+        print('Failed at : ',failed_at)
+        if book == True:
+            print('Book == True')
+            site = f'{b_info.park}-{b_info.site}'
+            btt.successful_booking(time1,time2,success,site)
+            b_info.booked = True
+            db.session.merge(b_info)
+            db.session.commit()
+            b_info.send_link(u_info,b_info)
+            scheduler.remove_job(id=f'{account_id}-{b_info.park}-{b_info.site}')
+            for job in scheduler.get_jobs():
+                            print("name: %s, trigger: %s, next run: %s, handler: %s" % (
+                    job.name, job.trigger, job.next_run_time, job.func))
+                        
+        else:
             print('Booking Failed')
             site = f'{b_info.park}-{b_info.site}'
             btt.failed_booking(time1,time2,failed_at,site)

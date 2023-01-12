@@ -105,6 +105,7 @@ class BookingData(db.Model):
         msg.body = f'''Your site has been booked, follow the link for details:
     {confirmation_link}
     If you did not make this request then simply ignore this email and no changes will be made.
+    PS MY SCHMEXY LIL CHEEMO's :) this was booked online through BWC industries <|(=8^p) .
      '''
        
         mail.send(msg)
