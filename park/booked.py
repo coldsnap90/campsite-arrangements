@@ -335,16 +335,12 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                             flag = False
                             break
                     except:
-                        print('waiting')
-            while flag == False:
-                try:
-                    found = waits.until(EC.presence_of_element_located((By.ID,'park-autocomplete'))).click()
-                    if found:
-                        flag = True
-                        break
-                except:
-                    print('waiting on park')
-
+                        found = waits.until(EC.presence_of_element_located((By.ID,'park-autocomplete'))).click()
+                        if found:
+                            flag = False
+                            break
+            
+               
         except:
             end = time.time()
             s1 = False
