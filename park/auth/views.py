@@ -97,6 +97,7 @@ def sign_up():
 @auth.route('/book',methods=['GET','POST'])
 @login_required
 def book():
+    
     form = ChoiceForm()
     form.sites.choices = [site.sites for site in Park.query.filter_by(park_site = form.park.data).all()]
 
@@ -507,6 +508,7 @@ def tempTasks():
             end_day = f'{date_booked} 19:59:00'
         elif date_booking.month < ((datetime.now().month + 4)%12) and date_booking.year == datetime.now().year:
             print('start 3')
+            print(datetime.now())
             date_booked = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day}'
             start_day = f'{date_booked} 06:53:00'
             end_day = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day+1} 19:59:00'
