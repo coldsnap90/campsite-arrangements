@@ -22,10 +22,12 @@ from park.models import *
 from datetime import datetime
 from park.booked import *
 from selenium import webdriver
+from selenium import webdriverexception
 
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+import selenium.common.exceptions as webdriverexception
 from datetime import datetime
 import time
 import random
@@ -599,22 +601,32 @@ def schedule_site(*args):
        b_info = BookingData.query.filter_by(user_id = account_id).first()
        s_info = stripe.Customer.retrieve(f'{u_info.cId}')
      
-       chrome_options = webdriver.ChromeOptions()
-       chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
-       #caps["pageLoadStrategy"] = "eager"  #  complete
-       chrome_options.add_argument("--headless") # Runs Chrome in headless mode.
-       chrome_options.add_argument('--disable-infobars')
-       chrome_options.add_argument("--disable-extensions")
-       chrome_options.add_argument("--disable-dev-shm-usage")
-       chrome_options.add_argument("--disable-setuid-sandbox") 
-       chrome_options.add_argument("--no-sandbox")
-       chrome_options.add_argument("--remote-debugging-port=9222") 
-       chrome_options = webdriver.ChromeOptions()
-       chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--headless')
+    #chrome_options.add_argument('--proxy-sever=socks5://127.0.0.1:0000')
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument("window-size=1200x600")
+    chrome_options.add_argument("--window-position=0,0")
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+
+  # exception for if chromedriver crashes on launch
+    try:
+      browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+    except webdriverexception as e:
+          print("\nChrome crashed on launch:")
+          print(e)
+          print("Trying again in 1 second")
+          time.sleep(1)
+          driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+          print("Success!\n")
+    except Exception as e:
+          raise Exception(e)
  #caps["pageLoadStrategy"] = "eager"  #  complete
 
-       browser = webdriver.Chrome(os.environ.get("CHROMEDRIVER_PATH"), options=chrome_options)
-   
+    
+    if '1'=='1':
        waits = wait(browser,20)
        Action = ActionChains(browser)
        time1 = time.time()
