@@ -324,18 +324,26 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                  'Oct':'10','Nov':'11','Dec':'12'}
         month = int(months[b_info.arrival_month])
         d2 = datetime(int(b_info.arrival_year),month,int(b_info.arrival_day),6,59,59,59)
-        ids = browser.find_elements_by_xpath('//*[@id]')
-        for ii in ids:
-            #print ii.tag_name
-            print(ii.get_attribute('id'))  
-        sleep(1)
-        found = waits.until(EC.presence_of_element_located((By.ID,"consentButton"))).click()
-
         try:
-         
-        
-
-            found = waits.until(EC.presence_of_element_located((By.ID,'park-autocomplete'))).click()
+            doc = wait(browser, 20).until(lambda browser: browser.execute_script('return document.readyState') == 'complete')
+            if doc:
+                flag = True
+                while flag:
+                    try:
+                        con = waits.until(EC.presence_of_element_located((By.ID,"consentButton"))).click()
+                        if con:
+                            flag = False
+                            break
+                    except:
+                        print('waiting')
+            while flag == False:
+                try:
+                    found = waits.until(EC.presence_of_element_located((By.ID,'park-autocomplete'))).click()
+                    if found:
+                        flag = True
+                        break
+                except:
+                    print('waiting on park')
 
         except:
             end = time.time()
