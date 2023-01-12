@@ -631,6 +631,7 @@ def schedule_site(*args):
         book,time2,success,failed_at = reservation(browser,waits,Action,u_info,b_info,s_info)
         btt = bookingTimeTest(None,datetime.now(),success,failed_at,None)
         print('Failed at : ',failed_at)
+        driver.quit()
         if book == True:
             print('Book == True')
             site = f'{b_info.park}-{b_info.site}'
