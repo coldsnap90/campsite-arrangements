@@ -598,12 +598,14 @@ def schedule_site(*args):
     b_info = args[1]
     with scheduler.app.app_context():
         try:
-            
+            print('driver window')
             driver.window_handles
             print("Driver has active window.")
             print("Driver doesn't have active window.")
             driver.quit()
+            print('driver window quit')
         except:
+            print('except')
             u_info = User.query.filter_by(id=account_id).first()
             b_info = BookingData.query.filter_by(user_id = account_id).first()
             s_info = stripe.Customer.retrieve(f'{u_info.cId}')
@@ -619,6 +621,7 @@ def schedule_site(*args):
 
        # exception for if chromedriver crashes on launch
         try:
+            print('Browser starting')
             browser = webdriver.Chrome(CHROMEDRIVER_PATH, chrome_options=chrome_options)
         except:
             print("\nChrome crashed on launch:")

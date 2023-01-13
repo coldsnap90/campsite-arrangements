@@ -319,7 +319,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
         browser.implicitly_wait(20) 
         web = browser.get('https://camping.bcparks.ca/')
      
-        
+        print('WEB')
         months = {'Jan':'1','Feb':'2','Mar':'3','Apr':'4','May':'5','Jun':'6','Jul':'7','Aug':'8','Sept':'9',
                  'Oct':'10','Nov':'11','Dec':'12'}
         month = int(months[b_info.arrival_month])
