@@ -520,7 +520,7 @@ def tempTasks():
             start_day = f'{date_booked} 06:53:00'
             end_day = f'{date_booked} 19:59:00'
     
-        scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[data,account_booking], id=f'{account.id}-{account_booking.park}-{account_booking.site}',start_date=start_day,end_date=end_day,minutes =2,max_instances =1)
+        scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[data,account_booking], id=f'{account.id}-{account_booking.park}-{account_booking.site}',minutes =2,max_instances =1)
         account_booking.logged = True
         db.session.merge(account_booking)
         db.session.commit()
@@ -629,11 +629,7 @@ def schedule_site(*args):
             time.sleep(1)
             driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
             print("Success!\n")
-        
-    #caps["pageLoadStrategy"] = "eager"  #  complete
 
-        
-    
         waits = wait(browser,20)
         Action = ActionChains(browser)
         time1 = time.time()
