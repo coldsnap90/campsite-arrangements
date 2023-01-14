@@ -256,8 +256,6 @@ def double_site(browser,waits,Action,u_info,b_info,s_info):
             print(' p_info not found - ',counter)
             counter+=1
 
-
- 
     print('PAST PINFOI')
     waits.until(EC.presence_of_all_elements_located((By.ID,'equipment-field')))
     equip_boxes = browser.find_elements(By.ID,'equipment-field') 
@@ -266,11 +264,10 @@ def double_site(browser,waits,Action,u_info,b_info,s_info):
         equip_box.click()
         equip_box_entries = browser.find_elements(By.CLASS_NAME,'mat-option-text')
   
-        equiptment = '1 Tent'
         for entry in equip_box_entries:
             print('equipbox2')
            
-            if str(entry.text) == equiptment:
+            if str(entry.text) == b_info.equiptment:
                 print('if entry ',entry.text)
                 entry.click()
                 break
@@ -323,13 +320,13 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
         d2 = datetime(int(b_info.arrival_year),month,int(b_info.arrival_day),6,59,59,59)
         if x:
             try:
-                browser.find_element(By.ID,'park-field').click()
+                found = browser.find_element(By.ID,'park-field').click()
                 if found:
                     print('located parks')
                 list_box=[]
                 list_box = browser.find_elements(By.CLASS_NAME,'mat-option-text')
                 for text in list_box:
-                    print(b_info.site)
+                    print(text.text)
                     if str(text.text) == b_info.park:
                         text.click()
                         break
