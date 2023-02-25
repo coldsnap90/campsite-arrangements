@@ -16,8 +16,8 @@ class Config:
   
     if env == 'pro':
         SERVER_NAME = "webookcamp.herokuapp.com"
-        SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='sqlite:///db.database')}
-        #SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='postgresql://xqoywsixdkorla:ac760ec6200df59ac4e33e149832a5f7664f3f78de429f22c609722fb9eedf5b@ec2-54-157-79-121.compute-1.amazonaws.com:5432/d9ilpqshnfmtq3')}
+        #SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='sqlite:///db.database')}
+        SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='postgresql://xqoywsixdkorla:ac760ec6200df59ac4e33e149832a5f7664f3f78de429f22c609722fb9eedf5b@ec2-54-157-79-121.compute-1.amazonaws.com:5432/d9ilpqshnfmtq3')}
     #"sqlite:///db.job"
     elif env == 'dev':
         SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='sqlite:///db.database')}
