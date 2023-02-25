@@ -42,7 +42,7 @@ def create_app(config_class=Config):
         app.register_blueprint(auth_blueprint,url_prefix='/auth',templates_folder='templates')
         app.register_blueprint(main_blueprint,url_prefix='/',templates_folder='templates')
         
-        db.create_all()
+        
        
         
         scheduler.start()
