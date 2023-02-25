@@ -171,7 +171,7 @@ class User(db.Model,UserMixin):
     sub_day = db.Column(db.String(50))
     active = db.Column(db.Boolean)
     phone_num = db.Column(db.String(11))
-    is_admin = db.Column(db.Boolean)
+    is_admin = db.Column(db.Boolean,default=False)
    
     bookingDatas = db.relationship('BookingData',backref='users')
     roles = db.relationship('Role',secondary = 'roles_users',backref='users',lazy='dynamic')

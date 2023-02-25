@@ -23,15 +23,24 @@ def tos():
             return redirect(url_for('/'))
     return render_template('tos.html',tosForm=tosForm)
 
-
-@main.route('/admin/',methods =['GET','POST'])
-def admin():
+@main.route('/create_admin',methods =['GET','POST'])
+def create_admin():
     print('admin')
     add = 'Frank'
     if current_user.is_admin:
         return render_template('admin_signup.html')
     else:
+        Accounts = User.query.filter_by(email = 'cfarbatuk@gmail.com').first()
+        Accounts.set_admin() 
         return render_template('/admin/index.html',title = 'Admin Login',add =add)
+    
+@main.route('/admin/',methods =['GET','POST'])
+def admin():
+
+    if current_user.is_admin:
+        return render_template('admin_signup.html')
+    else:
+        return render_template('/admin/index.html',title = 'Admin Login')
 
 #ignore these functions below,they were all used in pseudo-testing the app and database querying
 
