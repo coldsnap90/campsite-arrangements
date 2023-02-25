@@ -13,7 +13,7 @@ class Config:
     CSRF_ENABLED = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False  
     SCHEDULER_API_ENABLED = True  
-    SERVER_NAME = "127.0.0.1:5000"
+  
     if env == 'pro':
         SERVER_NAME = "webookcamp.herokuapp.com"
         SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='sqlite:///db.database')}
@@ -21,6 +21,7 @@ class Config:
     #"sqlite:///db.job"
     elif env == 'dev':
         SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='sqlite:///db.database')}
+        SERVER_NAME = "127.0.0.1:5000"
   
     SECRET_KEY = os.environ.get('ENV_SECRET_KEY')
     #SECURITY_PASSWORD_SALT = 'SUPER SALTY STRING !@#$%^&*()'
