@@ -150,7 +150,42 @@
                         {{form.yy}}
                     </div>
                 </div>
+                
+                <div class ='container-fluid' style="display:none" id = 'occupant'>
+                    <div class = "row mt-5" >
+                        <div class = 'col' id = 'bookField'>
+                            {{form.occupant_first_name.label(class = 'text_')}}<br>
+                            {{form.occupant_first_name}}
+                        </div>
+                        <div class = 'col'>
+                            {{form.occupant_last_name.label(class = 'text_')}}<br>
+                            {{form.occupant_last_name}}
+                        </div>
+                    </div>
+                <div class = "row mt-5" >
+                    <div class = 'col' id = 'bookField'>
+                
+                        {{form.occupant_postal_code.label(class = 'text_')}}<br>
+                        {{form.occupant_postal_code}}
+                    </div>
+                </div>
+                <div class = "row mt-5" >
+                    <div class = 'col' id = 'bookField'>
+                        {{form.occupant_address.label(class = 'text_')}}<br>
+                        {{form.occupant_address}}
+                    </div>
+                    <div class = 'col'>
+                        {{form.occupant_phone_num.label(class = 'text_')}}<br>
+                        {{form.occupant_phone_num}}
+                    </div>
+                </div>
+                </div>
 
+                <div class = 'row mt-5 mb-3 text-center'>
+                    <div class = 'col-6 offset-2' >
+                        <button class = 'btn btn-default' onclick="myFunction()">If occupant is someone else, click this</button>
+                    </div>
+                </div>
         <div class = 'row mt-5 mb-3 text-center'>
             <div class = 'col-6 offset-2' >
                 {{form.submit(class = 'btn btn-default')}}
@@ -163,6 +198,14 @@
 <script type="text/javascript">
     window.onload = function(){ alert("Please make sure you enter the right information, were not responsible if"+
     "a site is booked due to incorrect entries")}
+    function myFunction() {
+  var x = document.getElementById("occupant");
+  if (x.style.display === "none") {
+    x.style.display = "";
+  } else {
+    x.style.display = "none";
+  }
+} 
 </script>
 <script>
   

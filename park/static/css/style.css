@@ -200,10 +200,12 @@
   }
   
   #formHolder {
-    height: 75vh;
+    height: 80vh;
     background: url("../images/backcountry-camping.png") no-repeat center;
     background-size: cover;
-    position: relative;
+    margin:0;
+    padding:0;
+   
   }
   
   #headerPic {

@@ -6,7 +6,7 @@ from park.extensions import bcrypt,db,mail,Message,scheduler
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_security import login_required,login_user
 from park.booking import *
-from park.auth.forms import ChoiceForm,signupForm,updateForm,passwordResetForm,LoginForm,productForm,redirectForm,testForm,cancelForm,adminForm,requestResetForm
+from park.auth.forms import ChoiceForm,signupForm,updateForm,passwordResetForm,LoginForm,productForm,redirectForm,testForm,cancelForm,adminForm,requestResetForm,fakeForm
 from park.auth import auth
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
@@ -22,14 +22,13 @@ from park.models import *
 from datetime import datetime
 from park.booked import *
 from selenium import webdriver
-
-
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 import selenium.common.exceptions as webdriverexception
 from datetime import datetime
 import time
+import json
 import random
 
 
@@ -67,7 +66,11 @@ def login():
         user_email = requestForm.reset_email.data
         if requestForm.validate_email(user_email) == True:
             user = User.query.filter_by(email=user_email).first()
-            send_link(user,1)
+            salted_password = bcrypt.generate_password_hash('Machine81').decode('utf-8')
+            user.password = salted_password
+            db.session.merge(user)
+            db.session.commit()
+            #send_link(user,1)
             return render_template('login_user.html',login_form=form,resetForm=requestForm,error=error,request=request)
     return render_template('login_user.html',login_form=form,resetForm=requestForm,error=error,request=request)
 
@@ -91,7 +94,7 @@ def sign_up():
                         sub_day = None,phone_num = None)   
         db.session.add(new_user)
         db.session.commit()
-        send_link(new_user)
+        send_link(new_user,'confirm')
         return redirect(url_for('auth.login'))   
     return render_template('newUser.html',signUpForm=signUpForm)
 
@@ -127,9 +130,15 @@ def book():
                 months = {'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06','Jul':'07','Aug':'08','Sept':'09','Oct':'10','Nov':'11','Dec':'12'} 
                 arr_month=months[f'{form.arrival_month.data}']
                 print('arrival month : ',arr_month, ' - formdata : ',form.arrival_month.data, ' Type : - ',type(form.arrival_month.data))
-                newB = BookingData(park =form.park.data,site=form.sites.data,site_type=form.site_type.data,campground = form.campground.data,inner_campground=form.inner_campground.data,arrival_month=form.arrival_month.data,arrival_day=form.arrival_day.data,
-                arrival_year = form.arrival_year.data,nights = form.nights.data,equiptment = form.equiptment.data,email = form.email.data,password = form.password.data,
-                party_size=form.party_size.data,contact_num=form.contact_num.data,logged=False,booked=False,user_id=data)
+                if request.form['occupant'] != '':
+                    newB = BookingData(park =form.park.data,site=form.sites.data,site_type=form.site_type.data,campground = form.campground.data,inner_campground=form.inner_campground.data,arrival_month=form.arrival_month.data,arrival_day=form.arrival_day.data,
+                    arrival_year = form.arrival_year.data,nights = form.nights.data,equiptment = form.equiptment.data,email = form.email.data,password = form.password.data,
+                    party_size=form.party_size.data,contact_num=form.contact_num.data,logged=False,booked=False,user_id=data)
+                else:
+                    newB = BookingData(park =form.park.data,site=form.sites.data,site_type=form.site_type.data,campground = form.campground.data,inner_campground=form.inner_campground.data,arrival_month=form.arrival_month.data,arrival_day=form.arrival_day.data,
+                    arrival_year = form.arrival_year.data,nights = form.nights.data,equiptment = form.equiptment.data,email = form.email.data,password = form.password.data,
+                    party_size=form.party_size.data,contact_num=form.contact_num.data,logged=False,booked=False,occupant= True,occupant_first_name=form.occupant_first_name.data,
+                    occupant_last_name = form.occupant_last_name.data,occupant_address=form.occupant_address.data,occupant_postal_code=form.occupant_postal_code.data,occupant_phone_num = form.occupant_phone_num.data,ocuser_id=data)
                 db.session.add(newB)
                 db.session.commit()
                 return redirect(url_for('auth.tempTasks'))
@@ -140,6 +149,18 @@ def book():
         return redirect(url_for('auth.login'))
     form.sites.data = None      
     return render_template('booking.html',form = form)
+
+@auth.route('/check',methods = ['GET','POST'])
+def check():
+    form = fakeForm()
+    if form.is_submitted():
+        x = request.form['occupant']
+        print(x)
+
+    
+
+
+    return render_template('check.html',form=form)
 
 #route to dynamically load selectfield on book page
 @auth.route('/sited/<park>',methods=['GET'])
@@ -170,6 +191,7 @@ def sited(park):
 @auth.route('/accountDetails',methods=['GET'])
 @login_required
 def account_details():
+    print('Account details')
     data = User.get_id(current_user)
     Account = User.query.filter_by(id = data).first()
     booking = BookingData.query.filter_by(id=data).all()
@@ -190,29 +212,26 @@ def cancel_subscription():
 @auth.route('/editAccountDetails',methods=['GET','POST'])
 @login_required
 def edit_account_details():
+    print('Editing account details')
     data = User.get_id(current_user)
     account = User.query.get_or_404(data)
     form = updateForm()
     cancel_form = cancelForm()
     if form.is_submitted() and form.update_account.data:
+        print('form submitted')
         if request.form['email'] != '':
             account.email = request.form['email']
-        else:
-            account.email = account.email
+    
         if request.form['password'] != '':
             salted_password = bcrypt.generate_password_hash(request.form['password']).decode('utf-8')
             account.password = salted_password
-        else:
-            account.password = account.password
 
-        if request.form['firstName'] != '':
-            account.firstName = request.form['firstName']
-        else:
-            account.firstName = account.firstName
-        if request.form['lastName'] != '':
-            account.lastName = request.form['lastName']
-        else:
-            account.lastName = account.lastName 
+        if request.form['first_name'] != '':
+            account.firstName = request.form['first_name']
+      
+        if request.form['last_name'] != '':
+            account.lastName = request.form['last_name']
+
         if request.form['address'] != '':
             account.billingAddress = request.form['address']
         
@@ -230,22 +249,24 @@ def edit_account_details():
         else:
         
             form.email.data = account.email
-            form.firstName.data = account.firstName
-            form.lastName.data = account.lastName
+            form.first_name.data = account.firstName
+            form.last_name.data = account.lastName
             form.address.data = account.billingAddress
             form.city.data = account.city
             form.province.data = account.province
             form.country.data = account.country
             form.postal_code.data = account.postalCode
             form.password.data = '********'
+            form.phone_num.data = account.phone_num
+            form.country.data = account.country
         
         db.session.commit()
         d = User.get_id(current_user)
         acc = User.query.get_or_404(d)
-        return render_template('accountDetails.html',data=acc)
+        return redirect(url_for('auth.account_details'))
     
     if cancel_form.validate_on_submit():
-        return redirect(url_for('auth.cancelAccount'))
+        return redirect(url_for('auth.cancel_account'))
 
     return render_template('editAccountDetails.html',form = form,account=account,cForm=cancel_form)
 
@@ -253,14 +274,22 @@ def edit_account_details():
 def send_link(*args):
     new_user = args[0]
     token = new_user.generate_confirmation_token()
-    if args[1]:
-        msg = Message('Account confirmation link',
+    if args[1]=='reset':
+        msg = Message('Account password reset link',
                     recipients=[new_user.email])
         confirmation_link = url_for('auth.reset_password',token=token,_external=True)
         msg.body = f'''To confirm your password reset, visit the following link:
     {confirmation_link}
     If you did not make this request then simply ignore this email and no changes will be made.'''
-
+    elif args[1] =='book':
+        msg = Message('Account booking confirmation',
+                    recipients=[new_user.email])
+        confirmation_link = url_for('auth.confirm',token=token,_external=True)
+        msg.body = f'''To confirm your reservation, visit the following link:
+    {confirmation_link}
+    If you did not make this request then simply ignore this email and no changes will be made.
+'''
+ 
     else:
         msg = Message('Account confirmation link',
                     recipients=[new_user.email])
@@ -396,7 +425,7 @@ def cancel(book):
 #cancel subscription route
 @auth.route('/cancelAccount',methods=['GET','POST'])
 @login_required
-def cancelAccount():
+def cancel_account():
     cancel = True
     uncancelled =None
     user = User.get_id(current_user)
@@ -486,6 +515,8 @@ def tempTasks():
     
     months = {'Jan':'1','Feb':'2','Mar':'3','Apr':'4','May':'5','Jun':'6','Jul':'7','Aug':'8','Sept':'9',
                  'Oct':'10','Nov':'11','Dec':'12'}
+  
+
     account = User.query.get_or_404(data)
     sub = str(account.subscription)
     acc_scan_num = account.scan
@@ -502,8 +533,9 @@ def tempTasks():
         month = months[account_booking.arrival_month]
         date_booking = datetime(int(account_booking.arrival_year),int(month),int(account_booking.arrival_day),6,59,59,59)
       
+        print(date_booking.month > ((datetime.now().month + 4)%12) and date_booking.year == datetime.now().year)
         
-        if date_booking.month > ((datetime.now().month + 4)%12) and date_booking.year == datetime.now().year:
+        if date_booking.month >= ((datetime.now().month + 4)%12) and date_booking.year == datetime.now().year:
             print('start 1')
             date_booked = f'{date_booking.year}-{date_booking.month-4}-{date_booking.day}'
             start_day = f'{date_booked} 06:53:00'
@@ -520,7 +552,7 @@ def tempTasks():
             start_day = f'{date_booked} 06:53:00'
             end_day = f'{date_booked} 19:59:00'
     
-        scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[data,account_booking], id=f'{account.id}-{account_booking.park}-{account_booking.site}',minutes =2,max_instances =1)
+        scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[data,account_booking], id=f'{account.id}-{account_booking.park}-{account_booking.campground}-{account_booking.site}',start_date=start_day,end_date=end_day,minutes =2,max_instances =1)
         account_booking.logged = True
         db.session.merge(account_booking)
         db.session.commit()
@@ -596,10 +628,12 @@ def schedule_site(*args):
     print('starting Job')
     account_id = args[0]
     b_info = args[1]
+
+    print('b_info : ',b_info)
     with scheduler.app.app_context():
         try:
             print('driver window')
-            driver.window_handles
+            driver.window_handles[1]
             print("Driver has active window.")
             print("Driver doesn't have active window.")
             driver.quit()
@@ -607,27 +641,27 @@ def schedule_site(*args):
         except:
             print('except')
             u_info = User.query.filter_by(id=account_id).first()
-            b_info = BookingData.query.filter_by(user_id = account_id).first()
             s_info = stripe.Customer.retrieve(f'{u_info.cId}')
-            CHROMEDRIVER_PATH = os.environ.get('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
-            GOOGLE_CHROME_BIN = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
+  
+            #CHROMEDRIVER_PATH = os.environ.get('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
+            #GOOGLE_CHROME_BIN = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
             chrome_options = webdriver.ChromeOptions()
             chrome_options.add_argument('--no-sandbox')
-            chrome_options.add_argument('--headless')
+            #chrome_options.add_argument('--headless')
             #chrome_options.add_argument('--proxy-sever=socks5://127.0.0.1:0000')
             chrome_options.add_argument("--disable-dev-shm-usage")
             chrome_options.add_argument('--disable-gpu')
-            chrome_options.binary_location = GOOGLE_CHROME_BIN
+            #chrome_options.binary_location = GOOGLE_CHROME_BIN
 
        # exception for if chromedriver crashes on launch
         try:
             print('Browser starting')
-            browser = webdriver.Chrome(CHROMEDRIVER_PATH, chrome_options=chrome_options)
+            browser = webdriver.Chrome(chrome_options=chrome_options)
         except:
             print("\nChrome crashed on launch:")
             print("Trying again in 1 second")
             time.sleep(1)
-            driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+            driver = webdriver.Chrome(chrome_options=chrome_options)
             print("Success!\n")
 
         waits = wait(browser,20)
@@ -635,26 +669,33 @@ def schedule_site(*args):
         time1 = time.time()
         print('reservation starting')
         book,time2,success,failed_at = reservation(browser,waits,Action,u_info,b_info,s_info)
-        btt = bookingTimeTest(None,datetime.now(),success,failed_at,None)
+        btt = bookingTimeTest(None,datetime.now(),success,failed_at,None,0)
+        db.session.add(btt)
+        db.session.commit()
         print('Failed at : ',failed_at)
-        driver.quit()
+       
         if book == True:
             print('Book == True')
             site = f'{b_info.park}-{b_info.site}'
             btt.successful_booking(time1,time2,success,site)
+            db.session.merge(btt)
             b_info.booked = True
             db.session.merge(b_info)
             db.session.commit()
-            b_info.send_link(u_info,b_info)
-            scheduler.remove_job(id=f'{account_id}-{b_info.park}-{b_info.site}')
+            send_link(b_info,'book')
+    
+            scheduler.remove_job(id=f'{u_info.id}-{b_info.park}-{b_info.campground}-{b_info.site}')
             for job in scheduler.get_jobs():
                             print("name: %s, trigger: %s, next run: %s, handler: %s" % (
                     job.name, job.trigger, job.next_run_time, job.func))
+            print('skipped')
                         
         else:
             print('Booking Failed')
             site = f'{b_info.park}-{b_info.site}'
-            btt.failed_booking(time1,time2,failed_at,site)
+            btt.failed_booking(time1,time2,failed_at,site,1)
+            db.session.merge(btt)
+            db.session.commit()
 
 def blah3(*args):
     print('Job starting')
@@ -703,6 +744,21 @@ def Tquery():
     print('job created')
     return redirect(url_for('auth.bookings'))
 
+@auth.route('/datadel',methods =['GET','POST'])
+@login_required
+def datadel():
+    date = BookingData.query.all()
+    for i in date:
+        db.session.delete(i)
+        db.session.commit()
+    Account = User.query.filter_by(email = 'cfarbatuk@gmail.com').first()
+    time = bookingTimeTest.query.all()
+    for i in time:
+        db.session.delete(i)
+        db.session.commit()
+    Account.is_admins()
+    return render_template('data.html',site=date,campground = Account)
+
 @auth.route('/dquery',methods = ['GET','POST'])
 def dquery():
     print('scheduling')
@@ -737,7 +793,7 @@ def dquery():
             end_day = f'{date_booked} 23:59:00'
    
             if i.booked == False:
-                scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[data,i], id=f'{account.id}-{i.park}-{i.site}',minutes =1,max_instances =1)
+                scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[data,i], id=f'{account.id}-{i.park}-{i.campground}-{i.site}',minutes =1,max_instances =1)
                 print('scheduled')
     else:
         return render_template('cancel.html',scan = False)
@@ -748,36 +804,50 @@ def dquery():
 @auth.route('/testBook',methods =['GET','POST'])
 def testBook():
                 '''3 6 12 14'''
+                #start_date=start_day,end_date=end_day start_day = f'{date_booked} 06:53:00'
+                #end_day = f'{date_booked} 19:59:00'
                 data = User.get_id(current_user)
-                '''
-                newB = BookingData(park ='Porteau Cove',site='38',site_type='campsite',campground = 'B (Sites 38-44)',inner_campground=None,arrival_month='Jan',arrival_day='6',
-                arrival_year = '2023',nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
-                party_size='1',contact_num=f'6046141826',booked = True,user_id=data)
+                
+                newB = BookingData(park ='Porteau Cove',site='6',site_type='campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-02-27',arrival_month='Feb',arrival_day='27'
+                ,nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
+                party_size='4',contact_num=f'6046141826',booked = False,user_id=data)
                 db.session.add(newB)
                 db.session.commit()
-
-                newB = BookingData(park ='Porteau Cove',site='15',site_type='campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_month='Jan',arrival_day='6',
-                arrival_year = '2023',nights = '2',equiptment = '1 Tent',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
-                party_size='2',contact_num=f'6046141826',booked = False,user_id=data)
+                '''
+                newB = BookingData(park ='Porteau Cove',site='15',site_type='campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-02-27',arrival_month='Feb',arrival_day='27',
+                ,nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
+                party_size='4',contact_num=f'6046141826',booked = False,user_id=data)
                 db.session.add(newB)
                 db.session.commit()
                 
-                newB = BookingData(park ='Porteau Cove',site='8',site_type='campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_month='Jan',arrival_day='6',
+                newB = BookingData(park ='Porteau Cove',site='14',site_type='campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_month='Jan',arrival_day='25',
+                arrival_year = '2023',nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
+                party_size='4',contact_num=f'6046141826',booked = False,user_id=data)
+                db.session.add(newB)
+                db.session.commit()
+            
+                newB = BookingData(park ='Porteau Cove',site='9',site_type='campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_month='Jan',arrival_day='24',
                 arrival_year = '2023',nights = '1',equiptment = '3 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
                 party_size='1',contact_num=f'6046141826',booked = False,user_id=data)
                 db.session.add(newB)
                 db.session.commit()
-                '''
-                newB = BookingData(park ='Porteau Cove',site='4',site_type='campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_month='Jan',arrival_day='6',
-                arrival_year = '2023',nights = '3',equiptment = '1 Tent',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
+                
+            
+                newB = BookingData(park ='Porteau Cove',site='8',site_type='campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_month='Jan',arrival_day='24',
+                arrival_year = '2023',nights = '1',equiptment = '1 Tent',email = 'cfarbatuk@gmail.com',password = 'Machine8190$',
                 party_size='2',contact_num=f'6046141826',booked = False,user_id=data)
                 db.session.add(newB)
                 db.session.commit()
+                
+                '''
+            
                 data = User.get_id(current_user)
                 account = User.query.filter_by(id = data).first()
+                #'start_date='2023-01-16 17:45:00',end_date='2023-01-14 20:00:00''
                 account_booking = BookingData.query.filter_by(user_id = data).filter(BookingData.logged == False).all()
                 for i in account_booking:
-                    scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[data,i], id=f'{account.id}-{i.park}-{i.site}',minutes =1,max_instances =1)
+                    print(i)
+                    scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[data,i], id=f'{account.id}-{i.park}-{i.campground}-{i.site}',minutes =0.2,max_instances =1)
                     account.add_scan(True)
                     i.logged = True
                     db.session.merge(i)
@@ -793,7 +863,7 @@ def token_test():
     data = current_user.get_id()
     print('DATA : ',data)
     user = User.query.filter_by(id = data).first()
-    newB = BookingData(park ='Porteau Cove',site='5',site_type='campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_month='Jan',arrival_day='3',
+    newB = BookingData(park ='Porteau Cove',site='11',site_type='campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_month='Jan',arrival_day='3',
                 arrival_year = '2022',nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
                 party_size='1',contact_num=f'6046141826',booked = False,user_id=data)
     db.session.add(newB)
@@ -883,5 +953,73 @@ def rar():
     scheduler.remove_all_jobs()
     
     return render_template('data.html')
+
+'''
+@auth.route('/rar',methods=['GET','POST'])
+def rar():
+    scheduler.remove_all_jobs()
+    
+    return render_template('data.html')
+
+@auth.route('/ra',methods=['GET','POST'])
+def ra():
+    #sites = Site.query.all()
+    #for i in sites:
+     #   print(i.parks.id)
+    
+    with open("park.json", "r") as read_file:
+        site_data = json.load(read_file)
+        #for i in data:
+         #   print(i['park_id'])
+    read_file.close()
+            
+    with open("sites.json", "r") as read_file:
+        data = json.load(read_file)
+        #for i in data:
+            #print(i['park_id'])
+        read_file.close()
+    
+ 
+    
+    for i in data:
+        new_site = Site(campground = f"{i['campground']}",inner_campground = f"{i['inner_campground']}",names= f'{i["names"]}',park_id = int(i['park_id']))
+        db.session.add(new_site)
+        db.session.commit()
+    
+        #p = Park(park_site=i['park_site'])
+        #db.session.add(p)
+        #db.session.commit()
+    
+    n_u = Park.query.filter_by(park_site='Whiskers Point').first()
+    data = n_u.sites
+    print(n_u)
+    return render_template('data.html',data = data)
+
+@auth.route('/trans',methods=['GET','POST'])
+def trans():
+    user = User.query.all()
+    park = Park.query.all()
+    sites = Site.query.all()
+    sites_schema = SiteSchema(many=True)
+    park_schema = ParkSchema(many = True)
+    #user_schema = UserSchema(many=True)
+    #output = user_schema.dump(user)
+    park_o = park_schema.dump(park)
+    site_o = sites_schema.dump(sites)
+    file_path='./park.json'
+    f_p ='./sites.json'
+    with open(file_path, 'w') as outfile:
+        print("writing file to: ",file_path)
+        # HERE IS WHERE THE MAGIC HAPPENS 
+        json.dump(park_o, outfile)
+    outfile.close()    
+    with open(f_p, 'w') as outfile:
+        print("writing file to: ",file_path)
+        # HERE IS WHERE THE MAGIC HAPPENS 
+        json.dump(site_o, outfile)
+    outfile.close()    
+    return jsonify({'user':park_o})
+
+'''
 
 

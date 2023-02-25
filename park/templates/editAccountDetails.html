@@ -5,72 +5,83 @@
     <form method = 'POST' action='' name ='value'>
         
             <div class="row">
+                <div class ='col'>
                 {{form.csrf_token }}<br>
+                </div>
             </div> 
-            <div class ='row'>
+            
+            <div class ='row mt-3 '>
                 <div class = 'col' id = 'bookField'>
-                {{form.email.label}}<br>
+                {{form.email.label(class = 'text_')}}<br>
                 {{form.email(default = account.email)}}
                 </div>
-                <div class = 'col' id = 'bookField'>
-                    {{form.phone_num.label}}<br>
+                <div class = 'col'>
+                    {{form.phone_num.label(class = 'text_')}}<br>
                     {{form.phone_num(default = account.phone_num)}}
-                    </div>
+                </div>
             </div>
+
             <div class = 'row mt-3'>
                 <div class = 'col' id = 'bookField'>
-                {{form.password.label}}<br>
+                {{form.password.label(class = 'text_')}}<br>
                 {{form.password(default = account.password)}}
                 </div>
          
-                <div class = 'col' id = 'bookField'>
-                {{form.re_password.label}}<br>
+                <div class = 'col' >
+                {{form.re_password.label(class = 'text_')}}<br>
                 {{form.re_password(default = account.password)}}
                 </div>
             </div>
-            <div class = 'row mt-3' id = 'bookField'>
+
+            <div class = 'row mt-3'>
+                <div class = 'col' id = 'bookField'>
+                {{form.first_name.label(class = 'text_')}}<br>
+                {{form.first_name(default = account.firstName)}}
+                </div>
                 <div class = 'col'>
-                {{form.firstName.label}}<br>
-                {{form.firstName(default = account.firstName)}}
-                </div>
-                <div class = 'col' id = 'bookField'>
-                {{form.lastName.label}}<br>
-                {{form.lastName(default = account.lastName)}}
+                {{form.last_name.label(class = 'text_')}}<br>
+                {{form.last_name(default = account.lastName)}}
                 </div>
             </div>
+
             <div class ='row mt-3'>
                 <div class = 'col' id = 'bookField'>
-                {{form.address.label}}<br>
-                {{form.address(default = account.address)}}
+                {{form.address.label(class = 'text_')}}<br>
+                {{form.address(default = account.billingAddress)}}
                 </div>
-                <div class = 'col' id = 'bookField'>
-                {{form.postal_code.label}}<br>
-                {{form.postal_code(default = account.postal_code)}}
+                <div class = 'col'>
+                {{form.postal_code.label(class = 'text_')}}<br>
+                {{form.postal_code(default = account.postalCode)}}
                 </div>
             </div>
+
             <div class ='row mt-3'>
                 <div class = 'col' id = 'bookField'>
-                {{form.city.label}}<br>
+                {{form.city.label(class = 'text_')}}<br>
                 {{form.city(default = account.city)}}
                 </div>
 
-                <div class = 'col' id = 'bookField'>
-                {{form.province.label}}<br>
+                <div class = 'col'>
+                {{form.province.label(class = 'text_')}}<br>
                 {{form.province(default = account.province)}}
+                </div>
+            </div>
+
+            <div class ='row mt-3'>
+                <div class = 'col-6' id = 'bookField'>
+                {{form.country.label(class = 'text_')}}<br>
+                {{form.country(default = account.country)}}
                 </div>
             </div>
 
             
             <div class = 'row mt-5'>
-                <div class = 'col'  id = 'bookField'>
+                <div class = 'col-6 offset-2'  id = 'bookField'>
                     {{form.update_account(class = 'button_')}}
                 </div>
             </div>
        
     </form>
 </div>
-
-
-
 
 {% endblock %}

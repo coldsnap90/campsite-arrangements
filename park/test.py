@@ -30,14 +30,40 @@ import selectors
 import time
 
 
+def occupant(browser,waits,Action):
+    print('occll')
+    occupant_Fname = waits.until(EC.presence_of_element_located((By.ID,'first-name-field-0')))
 
+    type_speed(occupant_Fname,'Navdeep')
+
+    occupant_Lname = waits.until(EC.presence_of_element_located((By.ID,'last-name-field-0')))
+
+    type_speed(occupant_Lname,'cheema')
+ 
+    occupant_phone = waits.until(EC.presence_of_element_located((By.ID,'primary-phone-0')))
+
+    type_speed(occupant_phone,'6042179026')
+
+    occupant_address = waits.until(EC.presence_of_element_located((By.ID,'street-field-0')))
+   
+    type_speed(occupant_address,'7532 lark st')
+ 
+    occupant_postal = waits.until(EC.presence_of_element_located((By.ID,'postal-code-field-0'))) 
+    type_speed(occupant_postal,'v2s0j6')  
+  
+
+    sleep(3)
+    element = browser.find_element(By.ID,'confirmOccupant')
+    Action.move_to_element(element).click().perform()
+    return
 
 
 
 #delete reservation when an error occurs to far into the process
 def delete_reservation(browser,waits):
     print('deleting reservation')
-    waits.until(EC.presence_of_element_located((By.ID,'viewShoppingCartButton'))).click()
+    
+    waits.until(EC.element_to_be_clickable((By.ID,'viewShoppingCartButton'))).click()
     browser.implicitly_wait(10)
     waits.until(EC.presence_of_element_located((By.ID,'btn-remove'))).click()
     browser.implicitly_wait(10)
@@ -146,7 +172,7 @@ def pick_day(browser,waits,Action):
             if counter > 31:
                 flag = False
                 return False
-            if(date.text == '5'):
+            if(date.text == '19'):
                 date.click()
                 flag = False
                 break
@@ -179,7 +205,7 @@ def main():
         chrome_options = webdriver.ChromeOptions()
         #chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
         #caps["pageLoadStrategy"] = "eager"  #  complete
-        chrome_options.add_argument("--headless") # Runs Chrome in headless mode.
+        #chrome_options.add_argument("--headless") # Runs Chrome in headless mode.
         chrome_options.add_argument('--disable-infobars')
         chrome_options.add_argument("--disable-extensions")
         browser = webdriver.Chrome( options=chrome_options)
@@ -356,11 +382,12 @@ def main():
                     found_counter+=1
                     try:
                         print('Site Found')
+                        b='4'
                         waits.until(EC.presence_of_element_located((By.XPATH,"//h3[contains(text(),'%s')]" % b))).click()
                         r = 'Reserve'
                         x = waits.until(EC.presence_of_element_located((By.XPATH,"//span[contains(text(),'%s')]" % r)))
                         flag = True
-                        d2 = datetime(arr_year,arr_month,arr_day,20,55,30)
+                 
                         while flag:
                             print(datetime.now().time())
                             if datetime.now():
@@ -495,17 +522,22 @@ def main():
                 return False,end,s1,x
 
             try:   
-                    O='I will be the occupant.'
+                    O='Someone else will be the occupant.'
                     print(' O try ')
-                    waits.until(EC.presence_of_element_located((By.XPATH,"//span[contains(text(),'%s')]" % O)))
-                    print(' O try 1')
-                    waits.until(EC.presence_of_element_located(By.XPATH,"//mat-radio-button[contains(@id,'mat-radio-11')]")).click()
+                    try:
+                       z= waits.until(EC.presence_of_element_located((By.XPATH,"//span[contains(text(),'%s')]" % O))).click()
+                       occupant(browser,waits,Action)
+                  
+                    except:
+                        z =  waits.until(EC.presence_of_element_located(By.XPATH,"//mat-radio-button[contains(@id,'mat-radio-3')]")).click()
+                    
+                       
                     print(' O try 2')
-          
-                    waits.until(EC.element_to_be_clickable((By.ID,'confirmOccupant'))).click()
+                    waits.until(EC.presence_of_element_located((By.ID,'confirmOccupant'))).click()
                     sleep(2)
-
                     print(' O try 3')
+                    element = browser.find_element(By.ID,'confirmOccupant')
+                    Action.move_to_element(element).click().perform()
             except:
                     print('EXCEPT - i will be occupant')
                     try:
@@ -588,7 +620,10 @@ def main():
             if x == '1':
                 delete_reservation(browser,waits)
 
-x,y,z,e = main()
-print(' X : ',x, ' Y : ',y, ' Z : ',z,' E : ',e)
+#x,y,z,e = main()
+#print(' X : ',x, ' Y : ',y, ' Z : ',z,' E : ',e)
+flag = True
+while flag:
+   print('flag') 
 
 

@@ -2,7 +2,9 @@ from enum import unique
 from anyio import CapacityLimiter
 from flask import redirect,url_for,abort,render_template
 from .extensions import login_manager,mail,db,admin,Message
+#from .extensions import ma
 from flask_login import UserMixin,login_user,current_user,login_required,logout_user
+#from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import AdminIndexView,BaseView,expose
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
@@ -70,7 +72,7 @@ class BookingData(db.Model):
     inner_campground = db.Column(db.String(50))
     arrival_month = db.Column(db.String(10))
     arrival_day = db.Column(db.String(5))
-    arrival_year = db.Column(db.String(5))
+    arrival_date = db.Column(db.String(20))
     nights = db.Column(db.String(5))
     equiptment = db.Column(db.String(50))
     email = db.Column(db.String(50))
@@ -79,11 +81,19 @@ class BookingData(db.Model):
     contact_num = db.Column(db.String(11))
     logged = db.Column(db.Boolean,default = False)
     booked = db.Column(db.Boolean,default = False)
+    occupant = db.Column(db.Boolean,default = False)
+    occupant_first_name = db.Column(db.String(50))
+    occupant_last_name = db.Column(db.String(50))
+    occupant_address = db.Column(db.String(50))
+    occupant_postal_code= db.Column(db.String(50))
+    occupant_phone_num = db.Column(db.String(50))
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
 
 
     def __repr__(self):
-        return f"User({self.park},{self.site},{self.site_type},{self.campground},{self.inner_campground},{self.arrival_year},{self.arrival_month},{self.arrival_day},{self.party_size},{self.nights},{self.equiptment},{self.email},{self.password},{self.contact_num},{self.logged},{self.booked})"
+        return f"User({self.park},{self.site},{self.site_type},{self.campground},{self.inner_campground},{self.arrival_date},{self.arrival_month},{self.arrival_day},{self.party_size},{self.nights},{self.equiptment},{self.email},{self.password},{self.contact_num},{self.logged},{self.booked},{self.occupant}\
+        ,{self.occupant_first_name},{self.occupant_last_name},{self.occupant_address},{self.occupant_postal_code},{self.occupant_phone_num}"
+        
     def set_site(self,site):
         self.site = site 
     def set_day(self,day):
@@ -94,10 +104,10 @@ class BookingData(db.Model):
         self.contact_num = contact_num
         db.session.merge(self)
 
-    def send_link(self,user,bookingData):
+    def send_link(self,user):
         token = self.generate_confirmation_token()
         print('GEN TOKEN ', token)
-        print(bookingData.email)
+       
 
         msg = Message('Campsite booking Notifier',
                     recipients=[user.email])
@@ -358,14 +368,16 @@ class bookingTimeTest(db.Model):
     date_delta = db.Column(db.String(20))
     success = db.Column(db.Boolean,default=False)
     failed_at = db.Column(db.String(20))
+    failed_number = db.Column(db.Integer)
     def __repr__(self):
-        return f"Time (' time delta '{self.time_delta}', - date delta : '{self.date_delta}', - Success : '{self.success}', - Fail : '{self.failed_at}', - Site : '{self.site}')"
-    def __init__(self,time_delta,date_delta,success,failed_at,site):
+        return f"Time (' time delta '{self.time_delta}', - date delta : '{self.date_delta}', - Success : '{self.success}', - Fail : '{self.failed_at}', - Site : '{self.site}', - failed numbers : '{self.failed_number}'"
+    def __init__(self,time_delta,date_delta,success,failed_at,site,failed_number):
         self.date_delta = date_delta
         self.time_delta = time_delta
         self.success=success
         self.failed_at = failed_at
         self.site = site
+        self.failed_number = failed_number
 
     def successful_booking(self,time_delta_X1,time_delta_X2,success,site):
         if self.time_delta == None:
@@ -376,13 +388,43 @@ class bookingTimeTest(db.Model):
         self.site = site
      
         return
-    def failed_booking(self,time_delta_X1,time_delta_X2,failed_at,site=site):
+    def failed_booking(self,time_delta_X1,time_delta_X2,failed_at,site,failed_number):
             time_delta = time_delta_X2 - time_delta_X1
             self.time_delta = f'{time_delta} seconds'
             self.failed_at = failed_at
             self.success = False
             self.site = site
+            if self.failed_number == None:
+                self.failed_number = 1
+            else:
+                self.failed_number = int(self.failed_number + failed_number)
+            db.session.merge(self)
+            db.session.commit()
        
             
             return
+admin.add_view(ModelView(bookingTimeTest,db.session))
+'''
+class UserSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+       model = User
+       load_instance = True
+class ParkSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = Park 
+        load_instance = True
+    id = auto_field()
+    park_site = auto_field()
+  
+class SiteSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = Site
+        load_instance = True
+    id = auto_field()
+    campground = auto_field()
+    inner_campground = auto_field()
+    names = auto_field()
+    park_id = auto_field()
+
+'''
         

@@ -7,18 +7,19 @@ import os
 from park.models import MyHomeView
 
 
-ENV = ''
+ENV = 'Dev'
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(Config)
 
     if ENV == 'Dev':
-        app.config['DATABASE_URL'] ='postgres://bjpvjcjrblhewe:b607e31ec5c79adf08f4b03eb882c2560750487c1deeb879d1eb469f1aa2c1ea@ec2-34-234-240-121.compute-1.amazonaws.com:5432/d2392a684obolf'
-        x = 'postgresql-colorful-60964'
+
+        app.config['SQLALCHEMY_DATABASE_URI'] ='postgres://xqoywsixdkorla:ac760ec6200df59ac4e33e149832a5f7664f3f78de429f22c609722fb9eedf5b@ec2-54-157-79-121.compute-1.amazonaws.com:5432/d9ilpqshnfmtq3'
+
     else:
         #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.database'
         app.config['ADMIN_PASS'] = os.environ.get('ADMIN_PASS')
-        #app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql//:username:password@hostname:port/database'5432
+        #app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql//:username:password@hostname:port/database'
     with app.app_context():
         csrf.init_app(app)
         db.init_app(app)
