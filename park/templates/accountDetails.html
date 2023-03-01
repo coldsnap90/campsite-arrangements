@@ -67,7 +67,7 @@
     <div class = 'row' id = 'accRow'>
         <div class = 'col' id ='accText'>
         {% for i in booking %}
-                <p class = 'accTextInfo'><br> Park: {{i.park}}, site grouping: {{i.campground}}, {{i.inner_Campground}}, site number: {{i.site}},
+                <p class = 'accTextInfo'><br> Park: {{i.park}}, camp: {{i.campground}}, {{i.inner_Campground}}, site: {{i.site}},
                                         site type: {{i.site_type}}, {{i.arrival_day}}-{{i.arrival_month}}-{{i.arrival_year}}, Currently Booked: {{i.booked}} </p>
         {% endfor %}
         </div>
@@ -170,10 +170,14 @@
         <div class = 'col'>
         <a class = "btn btn-warning" id = 'accUp' href="{{url_for('auth.edit_account_details')}}"> Update Account </a> <br>
         </div>
+        <div class = 'col'>
+            <a class = "btn btn-warning" id = 'accUp' href="{{url_for('auth.cancel_booking')}}"> Cancel booking </a> <br>
+            </div>
+            </div>
         
         
         <div class = 'col'>
-            <a class = "btn btn-warning" id = 'accUp' href="{{url_for('auth.edit_account_details')}}"> Cancel Subscription </a> <br>
+            <a class = "btn btn-warning" id = 'accUp' href="{{url_for('auth.cancel_subscription')}}"> Cancel Subscription </a> <br>
             </div>
             </div>
     </div>

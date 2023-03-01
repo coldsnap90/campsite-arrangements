@@ -623,7 +623,15 @@ def main():
 #x,y,z,e = main()
 #print(' X : ',x, ' Y : ',y, ' Z : ',z,' E : ',e)
 flag = True
-while flag:
-   print('flag') 
 
+date_list = ['2023','07','01']
+d2 = datetime(int(date_list[0]),int(date_list[1]),int(date_list[2]),21,39,59,59)
+print(datetime.now())
+x=''
+while datetime.now().time() < d2.time():
+    print(d2, ' ',datetime.now())
+    x = datetime.now().time()
 
+x = datetime.now().time() - d2.time()
+print('Time : ',x)
+    

@@ -13,7 +13,7 @@ class ChoiceForm(FlaskForm):
                            'Carp Lake','Champion Lakes','Charlie Lake','Chiliwack Lake','Cowichan River','Crooked River','Cultus Lake','Dry Gulch','E.C. Manning','Elk Falls','Ellison','Englishman River Falls','Fillongley',
                            'Fintry','French Beach','Gladstone','Golden Ears','Gordon Bay','Green Lake','Herald','Horsefly Lake','Inland Lanke','Juan de Fuca','Juniper Beach',
                            'Kekuli Bay','Kentucky Alleyne','Kettle River','Kikomun Creek','Kleanza Creek','Kokanee Creek','Kootenay Lake',' Lac La Hache','Lac Le Jeune','Lakelse Lake','Liard River Hot Springs','Little Qualicum Falls',
-                           'Lov  land Bay','Mabel Lake','Martha Creek','Meziadin Lake','Miracle Beach','Moberly Lake','Monck','Montague Harbour Marine','Morton Lake','Mount Fernie','Mount Robson','Moyie Lake','Nairn Falls',
+                           'Lov  land Bay','Mabel Lake','Martha Creek','McDonald Creek','Meziadin Lake','Miracle Beach','Moberly Lake','Monck','Montague Harbour Marine','Morton Lake','Mount Fernie','Mount Robson','Moyie Lake','Nairn Falls',
                            'Newcastle Island Marine','North Thompson River','Okanagan Lake North','Okanagan Lake South','Otter Lake','Paarens Beach','Paul Lake','Porpoise Bay','Porteau Cove','Premier Lake','Prudhomme Lake','Purden Lake',
                            'Rathtrevor Beach','Red Bluff','Rolley Lake','Rosebery','Saltery Bay','Sasquatch','Shuswap Lake','Silver Lake','Skagit Valley','Smelt Bay','Sowchea Bay','Sproat Lake','Stamp River','Stemwinder','Strathcona',
                            'Summit Lake','Swan Lake','sw̓iw̓s (Haynes Point)','sx̌ʷəx̌ʷnitkʷ (Okanagan Falls)','Syringa','Ten Mile Lake','Tweedsmuir South','Tyhee Lake','Tā Ch’ilā (Boya Lake)','Wasa Lake','Wells Gray','Whiskers Point'],
@@ -47,6 +47,13 @@ class ChoiceForm(FlaskForm):
         occupant_address  = StringField('ENTER OCCUPANT LAST NAME .',validators = [AlphaNumeric()],render_kw={'style': 'width: 28ch'})
         occupant_phone_num  = StringField('ENTER OCCUPANT LAST NAME .',validators = [AlphaNumeric(),Length(10,10)],render_kw={'style': 'width: 28ch'})
         submit = SubmitField('Submit')
+
+class cancelBookingForm(FlaskForm):
+       
+       park = StringField('ENTER Park.',validators = [Alpha(),DataRequired()],render_kw={'style': 'width: 28ch'})
+       camp = StringField('ENTER Camp.',validators = [Alpha(),DataRequired()],render_kw={'style': 'width: 28ch'})
+       site = StringField('ENTER Site.',validators = [Alpha(),DataRequired()],render_kw={'style': 'width: 28ch'})
+       submit = SubmitField('Submit')
 class fakeForm(FlaskForm):
         occupant = SelectField('Enter occpant #. ',choices=['','True','False'],validators=[],render_kw={'style': 'width: 28ch'})
         occupant_first_name = StringField('ENTER OCCUPANT FIRST NAME .',validators = [Alpha()],render_kw={'style': 'width: 28ch'})
