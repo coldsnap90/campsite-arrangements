@@ -78,3 +78,10 @@ def deleteallbookings():
     db.session.commit()
     b5=BookingData.query.all()
     return render_template('data.html',data = b4, site =b5)
+@main.route('/checkuser',methods=['GET','POST'])
+def check_user():
+    b5 = User.query.all()
+    b4 = BookingData.query.all()
+    Account = bookingTimeTest.query.all()
+
+    return render_template('data.html',data = b4, site =b5,campground = Account)

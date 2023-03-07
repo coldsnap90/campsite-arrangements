@@ -14,9 +14,10 @@ def create_app(config_class=Config):
 
     if ENV == 'Dev':
 
-        app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql://xqoywsixdkorla:ac760ec6200df59ac4e33e149832a5f7664f3f78de429f22c609722fb9eedf5b@ec2-54-157-79-121.compute-1.amazonaws.com:5432/d9ilpqshnfmtq3'
+        app.config['SQLALCHEMY_DATABASE_URI'] ='    postgres://tymepwkuzahvve:0686a22d893f8b58c085d79f37af138c242ec3e4e00373d513530f8d17fe3f96@ec2-54-173-77-184.compute-1.amazonaws.com:5432/d473d2peg0efp6'
         app.config['ADMIN_PASS'] = os.environ.get('ADMIN_PASS')
     else:
+ 
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.database'
         app.config['ADMIN_PASS'] = os.environ.get('ADMIN_PASS')
         #app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql//:username:password@hostname:port/database'
@@ -44,7 +45,7 @@ def create_app(config_class=Config):
         
         
        
-        
+        db.create_all()
         scheduler.start()
         #app.cli.add_command('create_tables')
     return app

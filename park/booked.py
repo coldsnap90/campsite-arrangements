@@ -94,9 +94,11 @@ def occupant(browser,waits,Action,b_info):
         Action.move_to_element(element).click().perform()
         sleep(1)
         try:
+            print('return true occu')
             browser.find_element(By.ID,'ConfirmOccupant').click()
             return True
         except:
+             print('return False')
              return False
     
     except:
@@ -192,17 +194,32 @@ def confirm_reservation(browser,waits,Action):
 def confirm_acknowledgements(waits):
     '''navigfates acknowledgements page'''
     try:
-        sleep(1)
-        waits.until(EC.presence_of_element_located((By.XPATH,"//mat-checkbox[contains(@id,'mat-checkbox-')]"))).click()    
+        waits.until(lambda browser: browser.execute_script('return document.readyState') == 'complete')
     except:
+         pass
+    counter = 0
+    while counter < 10:
+        try:
+            sleep(1)
+            waits.until(EC.presence_of_element_located((By.XPATH,"//mat-checkbox[contains(@id,'mat-checkbox-')]"))).click()
+            break   
+        except:
+            print('counter ',counter)
+            counter+=1
+    if counter == 10:
         return False
-    
-    sleep(1)      
-    try:
-        waits.until(EC.element_to_be_clickable((By.XPATH,"//button[contains(@id,'confirmAcknowledgements')]"))).click()
-        return True
-    except:
-        return False
+        
+    sleep(1)  
+    while counter < 10:    
+        try:
+            waits.until(EC.element_to_be_clickable((By.XPATH,"//button[contains(@id,'confirmAcknowledgements')]"))).click()
+            return True
+        except:
+            print('counter ',counter)
+            counter+=1
+
+    if counter == 10:
+         return False
 
 def confirm_details(waits):
     '''navigates the details page'''
@@ -221,37 +238,37 @@ def confirm_occupant(browser,waits,Action,u_info,b_info):
                             checkbox = waits.until(EC.presence_of_element_located((By.XPATH,"//span[contains(text(),'%s')]" % O))).click()
                             bool_flag = occupant(browser,waits,Action,b_info)
                             sleep(2)
+                            if bool_flag == False:
+                                print('occupant flag false')
+                                element = browser.find_element(By.ID,'confirmOccupant')
+                                Action.move_to_element(element).click().perform()
+                                return True
                          
                         except:
                             checkbox =  waits.until(EC.presence_of_element_located(By.XPATH,"//mat-radio-button[contains(@id,'mat-radio-3')]")).click()
                             bool_flag = occupant(browser,waits,Action,b_info)
                             sleep(2)
+                            if bool_flag == False:
+                                print('occupant flag false')
+                                element = browser.find_element(By.ID,'confirmOccupant')
+                                Action.move_to_element(element).click().perform()
+                                return True
+                         
                           
-                
-                        element = browser.find_element(By.ID,'confirmOccupant')
-                        #Action.move_to_element(element).click().perform()
                         sleep(2)
 
                 except:
-
+                        print('no occupant')
                         n = 5
                         while n > 0:
-                            n-=1
                             try:
-
                                 waits.until(EC.element_to_be_clickable((By.ID,'confirmOccupant'))).click()
                                 sleep(2)
-                                flag = False
-                                print(':)')
+                                return True
+                                
                             except:
-
-                                pass
-                            return False
-                                #delete_reservation(browser,waits,Action)
-                                #end = time.time()
-                                #s1 = False
-                                #x = 'confirmOccuant'
-                                #return False,end,s1,x
+                                 n-=1
+                  
     else:
                 try:
                     n = 5
@@ -266,7 +283,6 @@ def confirm_occupant(browser,waits,Action,u_info,b_info):
                             print('except occupant')
                             waits.until(EC.presence_of_element_located((By.ID,'confirmOccupant'))).click()
                             return True
-                        
                 except:
                    return False
 
@@ -277,7 +293,7 @@ def confirm_party_info(browser,waits,Action):
         try:
             browser.find_element(By.XPATH,"//input[contains(@id,'subCat-0')]").click()
             backspace(Action)
-            sleep(0.25)
+            sleep(0.05)
             browser.find_element(By.XPATH,"//input[contains(@id,'subCat-0')]").send_keys('4')
             escape(Action)
             break
@@ -287,23 +303,12 @@ def confirm_party_info(browser,waits,Action):
     counter = 0
     sleep(1)
 
-    while counter < 10:
-        try:
-            browser.find_element(By.XPATH,"//input[contains(@id,'subCat-2')]").click()
-            backspace(Action)
-            sleep(0.25)
-            browser.find_element(By.XPATH,"//input[contains(@id,'subCat-2')]").send_keys('4')
-            escape(Action)
-            break
-            
-        except:
-            counter +=1
-    sleep(1)
     try:
         waits.until(EC.presence_of_element_located((By.ID,'partyInfoButton')))
         element = browser.find_element(By.ID,'partyInfoButton')
         Action.move_to_element(element).click().perform()
         sleep(2)
+        print('party info return')
         return True
 
     except:
@@ -311,16 +316,49 @@ def confirm_party_info(browser,waits,Action):
 
 def confirm_addons(browser,waits,Action):
     '''navigates the confirm addons page'''
-    try:
-        waits.until(EC.presence_of_element_located((By.ID,'confirmAdditionalInformation'))).click()
-        sleep(2)
-        waits.until(EC.presence_of_element_located((By.ID,'addOnsOptions'))).click()
-        sleep(2) 
-        return True 
-    except:
-        return False
+    flag = True
+    while flag:
+        try:
+              element = browser.find_element(By.ID,'partyInfoButton').click()
+              print('party info clicked')
+              sleep(2)
+              flag = False
 
-def confirm_purchase(browser,waits,Action,s_info):
+        except:
+             waits.until(EC.presence_of_element_located((By.ID,'confirmAdditionalInformation'))).click()
+             sleep(2)
+             print('confirm clicked')
+             flag = False
+             break
+
+    while flag == False:
+          
+        print('confirming')
+        try:
+            waits.until(EC.presence_of_element_located((By.ID,'confirmAdditionalInformation'))).click()
+            print('additional clicked')
+            sleep(2)
+            break
+        except:
+            waits.until(EC.presence_of_element_located((By.ID,'addOnsOptions'))).click()
+            sleep(2) 
+            print('add ons clicked')
+            return True 
+    counter = 0
+    while counter < 10:
+        try:
+             waits.until(EC.presence_of_element_located((By.ID,'addOnsOptions'))).click()
+             sleep(2)
+             return True
+        except:
+            sleep(1)
+            counter +=1
+            print('add ons failed')
+            
+    if counter == 10:
+         return False
+
+def confirm_purchases(browser,waits,Action):
     '''using the stripe api it makes a request for credit card details and pays for the campsite'''
     card = waits.until(EC.presence_of_element_located((By.ID,'cardNumber')))
     type_speed(card,s_info.metadata['metaNu'])
@@ -348,7 +386,7 @@ def confirm_purchase(browser,waits,Action,s_info):
                 except:
                     print('Not found')
 
-def confirm_purchase(browser,waits,Action,s_info):
+def confirm_purchase(browser,waits,Action):
 
     card = waits.until(EC.presence_of_element_located((By.ID,'cardNumber')))
     cards = '5524903605801563'
@@ -358,7 +396,7 @@ def confirm_purchase(browser,waits,Action,s_info):
     exp_month = waits.until(EC.presence_of_element_located((By.ID,'cardExpiryMonth')))
     type_speed(exp_month,'03')   
     exp_year = waits.until(EC.presence_of_element_located((By.ID,'cardExpiryYear')))
-    type_speed(exp_year,'2023')   
+    type_speed(exp_year,'2026')   
     card_code = waits.until(EC.presence_of_element_located((By.ID,'cardCvv')))   
     type_speed(card_code,'359')
     sleep(5)
@@ -491,7 +529,7 @@ def login(browser,waits,b_info):
     waits.until(EC.presence_of_element_located((By.ID,'loginButton'))).click()
  
 #if booking is a double site,this func executes
-def double_site(browser,waits,Action,u_info,b_info,s_info):
+def double_site(browser,waits,Action,u_info,b_info):
     flag1 = True
     while flag1 == True:
             try:
@@ -666,7 +704,7 @@ def double_site(browser,waits,Action,u_info,b_info,s_info):
 
     sleep(5)
     try:
-        card_code = waits.until(EC.presence_of_element_located((By.ID,'applyPaymentButton'))).click()
+        card_code = waits.until(EC.presence_of_element_located((By.ID,'applyPaymentButton')))
         if card_code:
             end = time.time()
             s1 = False
@@ -677,26 +715,26 @@ def double_site(browser,waits,Action,u_info,b_info,s_info):
             return False,end,s2,'Card Code'
 
 #main function for booking, called from the job function
-def reservation(browser,waits,Action,u_info,b_info,s_info):
+def reservation(browser,waits,Action,u_info,b_info):
         browser.implicitly_wait(5)
         doc_ready =wait(browser, 20).until(lambda browser: browser.execute_script('return document.readyState') == 'complete')
         web = browser.get('https://camping.bcparks.ca/')
 
         flag = True
         counter = 0
-        
+        counter = 0
+        '''
         while flag:
             counter+=1
             b= b_info.site_type
             try:
-                x = waits.until(EC.presence_of_element_located((By.XPATH,"//div[contains(@id,'tab-group-') and contains(text(),'%s')]" % b))).click()
+                waits.until(EC.presence_of_element_located((By.XPATH,"//div[contains(@id,'tab-group-') and contains(text(),'%s')]" % b))).click()
                 flag = False
-                
             except:
                 print('Dont care')
             if counter > 10:
                 browser.quit()
-        
+        '''
         month = str(b_info.arrival_date)
         date_list = month.split('-')
         arr_mon = str(date_list[1])
@@ -869,6 +907,8 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
         waits.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR,'.mat-accordion')))
         site_found = False
         found_counter = 0
+        b = '27'
+        c='20'
         while site_found == False:
             try:
     
@@ -880,6 +920,11 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                             i.click()
                             r = 'Reserve'
                             sleep(2)
+                            site_found = True
+                            break
+                        elif b in i.text or c in i.text:
+                            i.click()
+                            r = 'Reserve'                   
                             site_found = True
                             break
                            
@@ -977,7 +1022,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                             sleep(1)
 
                 #make payment func
-                b = confirm_purchase(browser,waits,Action,s_info)
+                b = confirm_purchase(browser,waits,Action)
                 if b == False:
                             end = time.time()
                             s1 = False
@@ -990,7 +1035,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                
         else:
             sleep(0.5)
-            b,x,y,z = double_site(browser,waits,Action,u_info,b_info,s_info)
+            b,x,y,z = double_site(browser,waits,Action,u_info,b_info)
             if b == False:
                  return b,x,y,z
             else:

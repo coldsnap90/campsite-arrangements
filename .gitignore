@@ -1,5 +1,8 @@
 test.py
 testbot.py
 db.job
-db.database
+datas.dump
 database.sql
+db.database
+cors.json
+db.test

@@ -4,9 +4,11 @@ load_dotenv()
 import os
 
 
+
+
 class Config:
+    #env = 'pro'
     env = 'pro'
-    #env = 'dev'
     ADMIN_PASS = os.environ.get('ENV_ADMIN_PASS')
     STRIPE_SECRET_KEY = os.environ.get('ENV_STRIPE_SECRET_KEY')
     STRIPE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_PUBLIC_KEY')
@@ -17,7 +19,7 @@ class Config:
     if env == 'pro':
         SERVER_NAME = "webookcamp.herokuapp.com"
         #SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='sqlite:///db.database')}
-        SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='postgresql://xqoywsixdkorla:ac760ec6200df59ac4e33e149832a5f7664f3f78de429f22c609722fb9eedf5b@ec2-54-157-79-121.compute-1.amazonaws.com:5432/d9ilpqshnfmtq3')}
+        SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='    postgres://tymepwkuzahvve:0686a22d893f8b58c085d79f37af138c242ec3e4e00373d513530f8d17fe3f96@ec2-54-173-77-184.compute-1.amazonaws.com:5432/d473d2peg0efp6')}
     #"sqlite:///db.job"
     elif env == 'dev':
         SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='sqlite:///db.database')}
@@ -40,4 +42,13 @@ class Config:
     #SESSION_COOKIE_HTTPONLY=True
     SESSION_COOKIE_SAMESITE='Lax'
     #no file upload
-    
+'''
+class TestingConfig(Config):
+    TESTING = True
+    WTF_CSRF_ENABLED = False
+
+
+config = {
+    'testing':TestingConfig
+}
+'''

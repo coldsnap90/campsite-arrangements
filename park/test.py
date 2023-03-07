@@ -628,10 +628,10 @@ date_list = ['2023','07','01']
 d2 = datetime(int(date_list[0]),int(date_list[1]),int(date_list[2]),21,39,59,59)
 print(datetime.now())
 x=''
-while datetime.now().time() < d2.time():
-    print(d2, ' ',datetime.now())
-    x = datetime.now().time()
 
-x = datetime.now().time() - d2.time()
+
 print('Time : ',x)
-    
+counter = 0
+while counter < 10:
+     counter+=1
+     print(counter)
