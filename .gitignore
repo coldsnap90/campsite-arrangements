@@ -6,3 +6,4 @@ database.sql
 db.database
 cors.json
 db.test
+/tests
