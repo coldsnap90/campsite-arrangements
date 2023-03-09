@@ -535,7 +535,7 @@ def login(browser,waits,b_info):
     waits.until(EC.presence_of_element_located((By.ID,'loginButton'))).click()
  
 #if booking is a double site,this func executes
-@profile(stream=fp)
+#@profile(stream=fp)
 def double_site(browser,waits,Action,u_info,b_info,s_info):
     flag1 = True
     while flag1 == True:
