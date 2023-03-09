@@ -7,8 +7,8 @@ import os
 
 
 class Config:
-    #env = 'pro'
     env = 'pro'
+    #env = 'dev'
     ADMIN_PASS = os.environ.get('ENV_ADMIN_PASS')
     STRIPE_SECRET_KEY = os.environ.get('ENV_STRIPE_SECRET_KEY')
     STRIPE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_PUBLIC_KEY')

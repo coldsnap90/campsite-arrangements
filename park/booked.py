@@ -776,13 +776,26 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
         
         #park
         try:
+                print('park')
+
                 found = browser.find_element(By.ID,'park-field').click()
                 list_box=[]
-                list_box = browser.find_elements(By.CLASS_NAME,'mat-option-text')
-                for text in list_box:
-                    print(text.text)
-                    if str(text.text) == b_info.park:
-                        text.click()
+                idbox = browser.find_element(By.XPATH,"//span[contains(@id,'mat-option-')]")
+                try:
+                    idbox = browser.find_element(By.XPATH,"//span[contains(@id,'mat-option-')]")
+                    print('idbox')
+                    for text in idbox:
+                        print(text.text)
+                        if str(text.text) == b_info.park:
+                            text.click()
+                            break
+                except:
+                    list_box = browser.find_elements(By.CLASS_NAME,'mat-option-text')
+                    print('listbo')
+                    for text in list_box:
+                        print(text.text)
+                        if str(text.text) == b_info.park:
+                            text.click()
                         break
    
         except:
