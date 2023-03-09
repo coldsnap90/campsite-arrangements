@@ -2,7 +2,7 @@ from importlib.metadata import metadata
 from importlib.util import source_from_cache
 from flask import render_template,request,redirect,url_for,jsonify,make_response,session,flash,Blueprint,abort,Response,current_app
 from sniffio import current_async_library
-from park.extensions import bcrypt,db,mail,Message,scheduler
+from park.extensions import bcrypt,db,mail,Message,scheduler,csrf
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_security import login_required,login_user
 from park.booking import *
@@ -30,6 +30,7 @@ from datetime import datetime
 import time
 import json
 import random
+import threading
 
 
 
@@ -371,10 +372,10 @@ def payment():
                 p_id = productKey[new_subscription]
     
             data = User.get_id(current_user)
-            p_id ='price_1LulFpH3k8WZ4arfK3inXJDT'
-            
             Account = User.query.filter_by(id = data).first()
-            if p_id[0] > '0':
+
+            if Account.subscription == None or new_subscription[0] > Account.subscription[0]:
+           
                 if new_subscription[1] == 's':
                     checkout_session = stripe.checkout.Session.create(line_items =[
                     {'price':p_id,'quantity':1}
@@ -405,18 +406,25 @@ def payment():
     return render_template('payment.html',form=product,errorr = errorr,sub = accounts,confirmForm=confirmForm)
 
 #success route if your purchase is successful
-@auth.route('/success/<book>',methods=['GET'])
+@auth.route('/success',methods=['GET'])
 @login_required
-def success(book):
+def success():
     session = stripe.checkout.Session.retrieve(request.args.get('session_id'))
+    if session:
+        book = True
+    else:
+        book = False
     customer = stripe.Customer.retrieve(session.customer)
+    data = User.get_id(current_user)
+    Account = User.query.filter_by(id = data).first()
     print(current_user)
     return render_template('success.html',book = book)
 
 #cancel route if your purchase failed
-@auth.route('/cancel/<book>',methods=['GET','POST'])
+@auth.route('/cancel',methods=['GET','POST'])
 @login_required
-def cancel(book):
+def cancel():
+    book = True
     return render_template('cancel.html',book=book)
 
 
@@ -444,6 +452,7 @@ def cancel_account():
 
 #webhook from stripe when a purchase is made
 @auth.route('/webhook', methods=['POST'])
+@csrf.exempt
 def webhook():
     print('WEBHOOK CALLED')
     if request.content_length > 1024 * 1024:
@@ -484,6 +493,7 @@ def webhook():
    
         valu = session.metadata['user_id']
         print(valu)
+        print('\\ val',valued)
         custy = User.query.filter_by(id=valu).first()
         id_update = custy.id_check(cust)
         sub_update = custy.subscription_check(valued)
@@ -639,7 +649,9 @@ def schedule_site(*args):
             print('driver window quit')
         except:
             print('except')
+
             u_info = User.query.filter_by(id=account_id).first()
+            s_info = stripe.Customer.retrieve(f'{u_info.cId}')
            
   
             #CHROMEDRIVER_PATH = os.environ.get('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
@@ -668,7 +680,9 @@ def schedule_site(*args):
         Action = ActionChains(browser)
         time1 = time.time()
         print('reservation starting')
-        book,time2,success,failed_at = reservation(browser,waits,Action,u_info,b_info)
+
+       
+        book,time2,success,failed_at = reservation(browser,waits,Action,u_info,b_info,s_info)
         btt = bookingTimeTest(None,datetime.now(),success,failed_at,None,0)
         db.session.add(btt)
         db.session.commit()
@@ -804,7 +818,7 @@ def testBook():
                 #start_date=start_day,end_date=end_day start_day = f'{date_booked} 06:53:00'
                 #end_day = f'{date_booked} 19:59:00'
                 data = User.get_id(current_user)
-                
+                '''
                 newB = BookingData(park ='McDonald Creek',site='24',site_type='Campsite',campground = 'Sites 19-39, 93-111 ',inner_campground=None,arrival_date='2023-07-3',arrival_month='Jul',arrival_day='3'
                 ,nights = '5',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
                 party_size='4',contact_num=f'6046213686',booked = False,user_id=data)
@@ -813,12 +827,30 @@ def testBook():
                 '''
                 #doubleSites
                 
-                newB = BookingData(park ='Porteau Cove',site='3',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-03-4',arrival_month='Mar',arrival_day='4'
+                newB = BookingData(park ='Porteau Cove',site='9',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-03-9',arrival_month='Mar',arrival_day='9'
                 ,nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
                 party_size='4',contact_num=f'6046141826',booked = False,user_id=data)
                 db.session.add(newB)
                 db.session.commit()
+                '''
+                newB = BookingData(park ='Porteau Cove',site='9',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-03-9',arrival_month='Mar',arrival_day='9'
+                ,nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
+                party_size='4',contact_num=f'6046141826',booked = False,occupant= True,occupant_first_name='Mandeep',
+                    occupant_last_name = 'Cheemo',occupant_address='7532 Lark st',occupant_postal_code='v2v3a3',occupant_phone_num = '6046141826',user_id=data)
+                db.session.add(newB)
+                db.session.commit()
+                newB = BookingData(park ='Porteau Cove',site='12',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-03-9',arrival_month='Mar',arrival_day='9'
+                ,nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
+                party_size='4',contact_num=f'6046141826',booked = False,occupant= True,occupant_first_name='Mandeep',
+                    occupant_last_name = 'Cheemo',occupant_address='7532 Lark st',occupant_postal_code='v2v3a3',occupant_phone_num = '6046141826',user_id=data)
+                db.session.add(newB)
+                db.session.commit()
+                '''
                 
+                
+        
+                
+                '''
                 newB = BookingData(park ='Porteau Cove',site='3',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-03-2',arrival_month='Mar',arrival_day='2'
                 ,nights = '2',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
                 party_size='4',contact_num=f'6046141826',booked = False,occupant= True,occupant_first_name='Mandeep',
@@ -867,7 +899,7 @@ def testBook():
                     start_day = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day} 06:55:00'
                     end_day = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day} 20:59:59'
                     #start_date=start_day,end_date=end_day,
-                    scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[data,i], id=f'{account.id}-{i.park}-{i.campground}-{i.site}',start_date=start_day,end_date=end_day,minutes =2,max_instances =1)
+                    scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[data,i], id=f'{account.id}-{i.park}-{i.campground}-{i.site}',minutes =2,max_instances =1)
                     account.add_scan(True)
                     i.logged = True
                     db.session.merge(i)
@@ -967,7 +999,44 @@ def delU():
             db.session.delete(i)
             db.session.commit()
     return render_template('data.html',data = user)
+@auth.route('/delsub',methods =['GET','POST'])
+@login_required
+def delsub():
+    data = User.get_id(current_user)
+    user = User.query.filter_by(id = data).first()
+    user.subscription = None
+    db.session.commit()
+    print(user.subcription)
 
+
+@auth.route('/custcreate',methods =['GET','POST'])
+@login_required
+@csrf.exempt
+def cust_create():
+    Account = User.get_id(current_user)
+    user = User.query.filter_by(id = Account).first()
+    print('user id : ',user.cId)
+    print(user.cId)
+    user.id_change('cus_NUDlqIApIiFkAI')
+    db.session.commit()
+    Account = User.get_id(current_user)
+    user = User.query.filter_by(id = Account).first()
+    print('new id : ',user.cId)
+    try:
+        x = stripe.Customer.retrieve(user.cId)
+   
+        print(x)
+    
+                 
+    finally:   
+        customer = stripe.Customer.modify(f'cus_NUDlqIApIiFkAI',email = f'cfarbatuk@gmail.com',address= {'city':f'Abbotsford','country':f'Canada','line1':f'33259 Rob ave',
+                'postal_code':f'v1m2k7','state':f'B.C.'},metadata ={'metaNa':f'Frank Castle','metaNu':f'4242424242424242','metaM':f'11','metaY':f'23',
+                'metaC':f'123'}) 
+    print('/n/n/n\n\n')
+    x = stripe.Customer.retrieve(user.cId)
+   
+    print(x)
+    return {}
 @auth.route('/rar',methods=['GET','POST'])
 def rar():
     scheduler.remove_all_jobs()

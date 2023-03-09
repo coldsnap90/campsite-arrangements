@@ -7,3 +7,5 @@ db.database
 cors.json
 db.test
 /tests
+/mem-logs
+cors.json

@@ -23,11 +23,14 @@ import pydub
 import os
 import selectors
 import time
-
+import threading
+#from memory_profiler import memory_usage,profile
+#fp = open('./memory_profile_app.log','w+')
 
 #bot program
 
 #delete reservation when an error occurs to far into the process
+#@profile(stream=fp)
 def delete_reservation(browser,waits,Action):
     '''deletes reservation'''
     flag = True
@@ -60,7 +63,7 @@ def delete_reservation(browser,waits,Action):
         else:
             flag = advisory(browser,waits)
 '''
-
+#@profile(stream=fp)
 def occupant(browser,waits,Action,b_info):
     '''navigates occupant page and enters in extra occupant info'''
     occupant_Fname = waits.until(EC.presence_of_element_located((By.XPATH,"//input[contains(@id,'first-name-field-')]")))
@@ -104,7 +107,7 @@ def occupant(browser,waits,Action,b_info):
     except:
          return False
     
-
+#@profile(stream=fp)
 def proceed_to_checkout(browser,waits,Action,b_info):
     '''navigates checkpout page and logs into account'''
     n = 5
@@ -125,7 +128,7 @@ def proceed_to_checkout(browser,waits,Action,b_info):
     
     except:
         return False
-
+#@profile(stream=fp)
 def confirm_reservation(browser,waits,Action):
     '''navigates initial reservation page'''
     flag1 = True
@@ -190,7 +193,7 @@ def confirm_reservation(browser,waits,Action):
                 return True
             except:
                 return False
-
+#@profile(stream=fp)
 def confirm_acknowledgements(waits):
     '''navigfates acknowledgements page'''
     try:
@@ -220,7 +223,7 @@ def confirm_acknowledgements(waits):
 
     if counter == 10:
          return False
-
+#@profile(stream=fp)
 def confirm_details(waits):
     '''navigates the details page'''
     try:
@@ -228,7 +231,7 @@ def confirm_details(waits):
         return True
     except:
         return False
-
+#@profile(stream=fp)
 def confirm_occupant(browser,waits,Action,u_info,b_info):
     '''navigates the occupants page'''
     if b_info.occupant == True:
@@ -285,7 +288,7 @@ def confirm_occupant(browser,waits,Action,u_info,b_info):
                             return True
                 except:
                    return False
-
+#@profile(stream=fp)
 def confirm_party_info(browser,waits,Action):
     '''navigates the party info page'''
     counter = 0
@@ -313,7 +316,7 @@ def confirm_party_info(browser,waits,Action):
 
     except:
         return False
-
+#@profile(stream=fp)
 def confirm_addons(browser,waits,Action):
     '''navigates the confirm addons page'''
     flag = True
@@ -357,8 +360,8 @@ def confirm_addons(browser,waits,Action):
             
     if counter == 10:
          return False
-
-def confirm_purchases(browser,waits,Action):
+#@profile(stream=fp)
+def confirm_purchases(browser,waits,Action,s_info):
     '''using the stripe api it makes a request for credit card details and pays for the campsite'''
     card = waits.until(EC.presence_of_element_located((By.ID,'cardNumber')))
     type_speed(card,s_info.metadata['metaNu'])
@@ -376,6 +379,7 @@ def confirm_purchases(browser,waits,Action):
     while flag == False:
                 try:
                     card_code = waits.until(EC.presence_of_element_located((By.ID,'applyPaymentButton')))
+                    browser.quit()
                     card_codes = True
                     if card_codes:
                         return True
@@ -385,7 +389,7 @@ def confirm_purchases(browser,waits,Action):
                         return False
                 except:
                     print('Not found')
-
+#@profile(stream=fp)
 def confirm_purchase(browser,waits,Action):
 
     card = waits.until(EC.presence_of_element_located((By.ID,'cardNumber')))
@@ -403,7 +407,8 @@ def confirm_purchase(browser,waits,Action):
     flag = False
     while flag == False:
                 try:
-                    card_code = waits.until(EC.presence_of_element_located((By.ID,'applyPaymentButton'))).click()
+                    card_code = waits.until(EC.presence_of_element_located((By.ID,'applyPaymentButton')))
+                    browser.quit()
                     card_codes = True
                     if card_codes:
                         return True
@@ -412,7 +417,7 @@ def confirm_purchase(browser,waits,Action):
                         return False
                 except:
                     print('Not found')
-   
+#@profile(stream=fp)   
 def advisory(browser,waits):
     '''checks to see if the site is a double site or not'''
     try:
@@ -426,7 +431,7 @@ def advisory(browser,waits):
          return True
     except:
          return False
-
+#@profile(stream=fp)
 def removed(browser,waits):
     try:
          browser.find_element(By.ID,'message')
@@ -439,7 +444,7 @@ def removed(browser,waits):
          return True
     except:
          return False
-
+#@profile(stream=fp)
 def no_sites(browser,waits):
     '''checks to see if site is missing'''
     flag = False
@@ -454,17 +459,17 @@ def no_sites(browser,waits):
     except:
         pass
     return flag
-
+#@profile(stream=fp)
 def escape(Action):
     '''escapes some click function'''
     Action.key_down(Keys.ESCAPE).perform()
     Action.key_up(Keys.ESCAPE).perform()
-
+#@profile(stream=fp)
 def backspace(Action):
     '''deletes some inpits'''
     Action.key_down(Keys.BACKSPACE).perform()
     Action.key_up(Keys.BACKSPACE).perform()
-
+#@profile(stream=fp)
 def pick_month(browser,waits,Action,month):
     '''checks for month of request booking and clicks it'''
     siteEntryMonthText=[]
@@ -487,7 +492,7 @@ def pick_month(browser,waits,Action,month):
         except:
             pass
     return True
-
+#@profile(stream=fp)
 def pick_day(browser,waits,Action,b_info):
     '''checks for day of request bookinf and clicks it'''
     flag = True
@@ -512,6 +517,7 @@ def pick_day(browser,waits,Action,b_info):
     return True
 
 #logins in to bc parks account
+#@profile(stream=fp)
 def login(browser,waits,b_info):
     found = waits.until(EC.presence_of_element_located((By.ID,'email')))
     email = browser.find_element(By.ID,"email")
@@ -529,7 +535,8 @@ def login(browser,waits,b_info):
     waits.until(EC.presence_of_element_located((By.ID,'loginButton'))).click()
  
 #if booking is a double site,this func executes
-def double_site(browser,waits,Action,u_info,b_info):
+@profile(stream=fp)
+def double_site(browser,waits,Action,u_info,b_info,s_info):
     flag1 = True
     while flag1 == True:
             try:
@@ -705,6 +712,7 @@ def double_site(browser,waits,Action,u_info,b_info):
     sleep(5)
     try:
         card_code = waits.until(EC.presence_of_element_located((By.ID,'applyPaymentButton')))
+        browser.quit()
         if card_code:
             end = time.time()
             s1 = False
@@ -715,7 +723,22 @@ def double_site(browser,waits,Action,u_info,b_info):
             return False,end,s2,'Card Code'
 
 #main function for booking, called from the job function
-def reservation(browser,waits,Action,u_info,b_info):
+
+#@profile(stream=fp)
+def reservation(browser,waits,Action,u_info,b_info,s_info):
+ #       @profile(stream=fp)
+        def mytimer():
+            print('timer start')
+            sleep(300)
+            print('browser closing')
+            browser.quit()
+        try:
+            print('thread start')
+            x = threading.Thread(target=mytimer)
+            x.start()
+        except:
+             print('could not thread')
+
         browser.implicitly_wait(5)
         doc_ready =wait(browser, 20).until(lambda browser: browser.execute_script('return document.readyState') == 'complete')
         web = browser.get('https://camping.bcparks.ca/')
@@ -907,8 +930,7 @@ def reservation(browser,waits,Action,u_info,b_info):
         waits.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR,'.mat-accordion')))
         site_found = False
         found_counter = 0
-        b = '27'
-        c='20'
+
         while site_found == False:
             try:
     
@@ -922,12 +944,7 @@ def reservation(browser,waits,Action,u_info,b_info):
                             sleep(2)
                             site_found = True
                             break
-                        elif b in i.text or c in i.text:
-                            i.click()
-                            r = 'Reserve'                   
-                            site_found = True
-                            break
-                           
+                        
         
                 waits.until(EC.presence_of_element_located((By.ID,"loadMoreButton"))).click()
                 sleep(1)
@@ -1022,20 +1039,21 @@ def reservation(browser,waits,Action,u_info,b_info):
                             sleep(1)
 
                 #make payment func
-                b = confirm_purchase(browser,waits,Action)
+                b = confirm_purchases(browser,waits,Action,s_info)
                 if b == False:
                             end = time.time()
                             s1 = False
                             browser.quit()
                             return b,end,s1,None
                 else:
+                                  
                                 end = time.time()
                                 s2 = True
                                 return b,end,s2,'CARD CODE'
-               
+             
         else:
             sleep(0.5)
-            b,x,y,z = double_site(browser,waits,Action,u_info,b_info)
+            b,x,y,z = double_site(browser,waits,Action,u_info,b_info,s_info)
             if b == False:
                  return b,x,y,z
             else:

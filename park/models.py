@@ -246,6 +246,12 @@ class User(db.Model,UserMixin):
         else:
             print('ID exists')
             return False
+    def id_change(self,id):
+            self.cId = id
+            db.session.merge(self)
+            return True
+      
+
     def sId_check(self,id):
         if self.sId == None:
             self.sId = id
