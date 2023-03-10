@@ -963,6 +963,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                 for i in sites:
                         print(i.text)
                         if b_info.site in i.text:
+                            print('site : ',i.text)
                             i.click()
                             r = 'Reserve'
                             sleep(2)
@@ -981,6 +982,12 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                     x = 'site search'
                     return False,end,s1,x
             #sitefound
+        if site_found == False:
+            end = time.time()
+            s1 = False
+            x = 'site search'
+            return False,end,s1,x
+        
         bool_flag = True 
         while bool_flag == True:
      

@@ -658,7 +658,7 @@ def schedule_site(*args):
             #GOOGLE_CHROME_BIN = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
             chrome_options = webdriver.ChromeOptions()
             chrome_options.add_argument('--no-sandbox')
-            #chrome_options.add_argument('--headless')
+            chrome_options.add_argument('--headless')
             #chrome_options.add_argument('--proxy-sever=socks5://127.0.0.1:0000')
             chrome_options.add_argument('--no-zygote')
             chrome_options.add_argument("--disable-dev-shm-usage")
@@ -827,7 +827,7 @@ def testBook():
                 '''
                 #doubleSites
                 
-                newB = BookingData(park ='Porteau Cove',site='9',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-03-9',arrival_month='Mar',arrival_day='9'
+                newB = BookingData(park ='Porteau Cove',site='7',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-03-9',arrival_month='Mar',arrival_day='9'
                 ,nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
                 party_size='4',contact_num=f'6046141826',booked = False,user_id=data)
                 db.session.add(newB)
