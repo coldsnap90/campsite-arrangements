@@ -742,11 +742,12 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
         browser.implicitly_wait(5)
         doc_ready =wait(browser, 20).until(lambda browser: browser.execute_script('return document.readyState') == 'complete')
         web = browser.get('https://camping.bcparks.ca/')
-        print(browser.find_element_by_xpath("/html/body").text)
+
         print('\n\n')
         flag = True
         counter = 0
         counter = 0
+        sleep(1)
         '''
         while flag:
             counter+=1
@@ -780,19 +781,24 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
         try:
                 print('park')
 
-                found = browser.find_element(By.ID,'park-field').click()
+                #found = browser.find_element(By.ID,'park-field').click()
                 print('park field')
                 list_box=[]
-                idbox = browser.find_element(By.XPATH,"//span[contains(@id,'mat-option-')]")
+                idbox = browser.find_element(By.XPATH,"//input[contains(@id,'park-autocomplete')]").click()
+                print('idbox clicked')
                 try:
-                    idbox = browser.find_element(By.XPATH,"//span[contains(@id,'mat-option-')]")
-                    print('idbox')
-                    for text in idbox:
+                    found = browser.find_element(By.ID,'park-field').click()
+                    if found:
+                        print('located parks')
+                    list_box=[]
+                    list_box = browser.find_elements(By.CLASS_NAME,'mat-option-text')
+                    for text in list_box:
                         print(text.text)
                         if str(text.text) == b_info.park:
                             text.click()
                             break
                 except:
+                    print('except list')
                     list_box = browser.find_elements(By.CLASS_NAME,'mat-option-text')
                     print('listbo')
                     for text in list_box:
