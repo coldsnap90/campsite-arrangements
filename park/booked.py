@@ -742,7 +742,8 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
         browser.implicitly_wait(5)
         doc_ready =wait(browser, 20).until(lambda browser: browser.execute_script('return document.readyState') == 'complete')
         web = browser.get('https://camping.bcparks.ca/')
-
+        print(browser.find_element_by_xpath("/html/body").text)
+        print('\n\n')
         flag = True
         counter = 0
         counter = 0
@@ -771,14 +772,16 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
         try:
             waits.until(EC.visibility_of_element_located((By.ID,'consentButton')))
             waits.until(EC.element_to_be_clickable((By.ID,'consentButton'))).click()
+            print('consent click')
         except:
-            pass
-        
+            print('skipped consent')
+        counter = 0        
         #park
         try:
                 print('park')
 
                 found = browser.find_element(By.ID,'park-field').click()
+                print('park field')
                 list_box=[]
                 idbox = browser.find_element(By.XPATH,"//span[contains(@id,'mat-option-')]")
                 try:
@@ -799,10 +802,12 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                         break
    
         except:
-                end = time.time()
-                s1 = False
-                x = 'located park'
-                return False,end,s1,x
+                counter+=1
+                if counter > 5:
+                    end = time.time()
+                    s1 = False
+                    x = 'located park'
+                    return False,end,s1,x
 
         waits.until(EC.presence_of_element_located((By.ID,'mat-date-range-input-0')))
         element = waits.until(EC.presence_of_element_located((By.CSS_SELECTOR,'.mat-date-range-input-start-wrapper'))).click()
