@@ -827,25 +827,25 @@ def testBook():
                 '''
                 #doubleSites
                 
-                newB = BookingData(park ='Porteau Cove',site='7',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-03-9',arrival_month='Mar',arrival_day='9'
+                newB = BookingData(park ='Porteau Cove',site='27',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-03-10',arrival_month='Mar',arrival_day='10'
                 ,nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
                 party_size='4',contact_num=f'6046141826',booked = False,user_id=data)
                 db.session.add(newB)
                 db.session.commit()
-                '''
-                newB = BookingData(park ='Porteau Cove',site='9',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-03-9',arrival_month='Mar',arrival_day='9'
+                
+                newB = BookingData(park ='Porteau Cove',site='28',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-03-10',arrival_month='Mar',arrival_day='10'
                 ,nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
                 party_size='4',contact_num=f'6046141826',booked = False,occupant= True,occupant_first_name='Mandeep',
                     occupant_last_name = 'Cheemo',occupant_address='7532 Lark st',occupant_postal_code='v2v3a3',occupant_phone_num = '6046141826',user_id=data)
                 db.session.add(newB)
                 db.session.commit()
-                newB = BookingData(park ='Porteau Cove',site='12',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-03-9',arrival_month='Mar',arrival_day='9'
-                ,nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
-                party_size='4',contact_num=f'6046141826',booked = False,occupant= True,occupant_first_name='Mandeep',
-                    occupant_last_name = 'Cheemo',occupant_address='7532 Lark st',occupant_postal_code='v2v3a3',occupant_phone_num = '6046141826',user_id=data)
+                
+                newB = BookingData(park ='Porteau Cove',site='25',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date='2023-03-10',arrival_month='Mar',arrival_day='10'
+                ,nights = '1',equiptment = '2 Tents',email = 'cfarbatuk@gmail.com',password = 'Machine8190$',
+                party_size='4',contact_num=f'6046141826',booked = False,occupant= False,user_id=data)
                 db.session.add(newB)
                 db.session.commit()
-                '''
+                
                 
                 
         
