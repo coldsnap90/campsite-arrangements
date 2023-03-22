@@ -47,7 +47,7 @@ class ChoiceForm(FlaskForm):
         occupant_address  = StringField('ENTER OCCUPANT ADDRESS.',validators = [AlphaNumeric()],render_kw={'style': 'width: 28ch'})
         occupant_phone_num  = StringField('ENTER OCCUPANT PHONE NUM.',validators = [AlphaNumeric(),Length(10,10)],render_kw={'style': 'width: 28ch'})
         submit = SubmitField('Submit')
-        
+
         def validate_date(self,arrival_date):
                 if arrival_date < datetime.now().date():
                         return False
@@ -146,6 +146,7 @@ class passwordResetForm(FlaskForm):
 
 
 class productForm(FlaskForm):
+        test = SubmitField('Subscribe')
         iann_mem_bronze = SubmitField('Subscribe')
         jann_mem_silver = SubmitField('Subscribe')
         kann_mem_gold = SubmitField('Subscribe')

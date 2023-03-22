@@ -345,7 +345,7 @@ def payment():
         realproductKey = {'iann_mem_bronze':'price_1LmSeeH3k8WZ4arfFSxheyTG','jann_mem_silver':'price_1LmSefH3k8WZ4arfZUxMjyKe',
     'kann_mem_gold':'price_1LmSefH3k8WZ4arf8YLs693X','lann_mem_plat':'price_1LmSefH3k8WZ4arfidVgDZiG','emon_mem_bronze':'price_1MGwSjH3k8WZ4arftdFl1zKT',
     'fmon_mem_silver':'price_1MGwSjH3k8WZ4arff5xCQvYI','gmon_mem_gold':'price_1MGwSjH3k8WZ4arf3oUu6qgB','hmon_mem_plat':'price_1MGwSjH3k8WZ4arfSoVH91jP','asingle_bronze':'price_1MGwVSH3k8WZ4arfypWmp1tR',
-    'bsingle_silver':'price_1MGwVSH3k8WZ4arfLkXcMkzY','csingle_gold':'price_1MGwVSH3k8WZ4arfQ8OzBIfb','dsingle_plat':'price_1MGwVSH3k8WZ4arfXwO7cLbt'}
+    'bsingle_silver':'price_1MGwVSH3k8WZ4arfLkXcMkzY','csingle_gold':'price_1MGwVSH3k8WZ4arfQ8OzBIfb','dsingle_plat':'price_1MGwVSH3k8WZ4arfXwO7cLbt','test':'price_1MoJN1H3k8WZ4arfdFQWx4kj'}
         
         new_subscription = None
         id = None
@@ -358,13 +358,13 @@ def payment():
             else:
                 print(new_subscription)
                 
-            if new_subscription in productKey:
-                p_id = productKey[new_subscription]
+            if new_subscription in realproductKey:
+                p_id = realproductKey[new_subscription]
     
             User.get_id(current_user)
             user_account = User.query.filter_by(id = User.get_id(current_user)).first()
 
-            if user_account.subscription == None or new_subscription[0] > user_account.subscription[0]:
+            if user_account.subscription == None or new_subscription[0]=='t' or new_subscription[0] > user_account.subscription[0]:
            
                 if new_subscription[1] == 's':
                     checkout_session = stripe.checkout.Session.create(line_items =[
