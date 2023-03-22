@@ -7,6 +7,7 @@ db.database
 cors.json
 db.test
 runs.py
+test_routes.py
 test_client.py
 /tests
 /mem-logs

@@ -146,7 +146,6 @@ class passwordResetForm(FlaskForm):
 
 
 class productForm(FlaskForm):
-        test = SubmitField('Subscribe')
         iann_mem_bronze = SubmitField('Subscribe')
         jann_mem_silver = SubmitField('Subscribe')
         kann_mem_gold = SubmitField('Subscribe')
