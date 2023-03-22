@@ -10,8 +10,8 @@ class Config:
     env = 'pro'
     #env = 'dev'
     ADMIN_PASS = os.environ.get('ENV_ADMIN_PASS')
-    STRIPE_SECRET_KEY = os.environ.get('ENV_STRIPE_SECRET_KEY')
-    STRIPE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_PUBLIC_KEY')
+    STRIPE_LIVE_SECRET_KEY = os.environ.get('ENV_STRIPE_LIVE_SECRET_KEY')
+    STRIPE_LIVE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_LIVE_PUBLIC_KEY')
     CSRF_ENABLED = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False  
     SCHEDULER_API_ENABLED = True  

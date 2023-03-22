@@ -34,7 +34,7 @@ import threading
 
 
 
-stripe.api_key = Config.STRIPE_SECRET_KEY
+stripe.api_key = Config.STRIPE_LIVE_SECRET_KEY
 
 #login route
 @auth.route('/login',methods =['GET','POST'])
