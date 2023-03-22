@@ -18,7 +18,7 @@ def create_app(config_class=Config):
         app.config['ADMIN_PASS'] = os.environ.get('ADMIN_PASS')
   
 
-    else:
+    elif ENV == 'EV':
  
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.database'
         app.config['ADMIN_PASS'] = os.environ.get('ADMIN_PASS')
@@ -32,7 +32,7 @@ def create_app(config_class=Config):
         mail.init_app(app)
         moment.init_app(app)
         scheduler.init_app(app)
-        migrate.init_app(app,db)
+        migrate.init_app(app,db, render_as_batch=True)
         admin.init_app(app)
         
 

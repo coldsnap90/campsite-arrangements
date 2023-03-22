@@ -13,18 +13,18 @@
     <p class="lead">As low as 6$ </p>
     <div class = 'container-fluid'>
 
-    <div class ='row mt-5'>
+    <div class ='row mt-5' id ='baseDiv'>
       <div class = 'col text-center'>
     {% if uncancelled %}
-        <p class ='texts_'> Your subscription could not be cancelled or it doesnt exist, please contact customer support</p>
+        <p class ='texts_' id = 'weBookCancel'> Your subscription could not be cancelled or it doesnt exist, please contact customer support</p>
     {%  elif cancel %} 
-    <p class ='texts_'> You have cancelled your subscription </p>
-    {% elif scan %}
-    <p class ='texts_'> Your plan has exceeded your maximum concurrent scans, please upgrade </p>
+    <p class ='texts_' id = 'weBookCancel'> You have cancelled your subscription </p>
+    {% elif scan == False %}
+    <p  class = 'texts_' id = 'weBookCancel'> Your plan has exceeded your maximum concurrent scans, please upgrade for more scans. </p>
     {% elif book %}
-    <p class ='texts_'> Your booking was not successful please make another </p>
+    <p class ='texts_' id = 'weBookCancel'> Your booking was not successful please make another </p>
     {% else %}
-    <p class ='texts_'> Your order was not successful please click below to redirect</p>
+    <p class ='texts_' id = 'weBookCancel'> Your order was not successful please click below to redirect</p>
     {% endif %}
     </div>
     </div>

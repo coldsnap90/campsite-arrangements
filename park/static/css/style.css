@@ -27,7 +27,17 @@
     color: var(--gold);
   
   }
-  #weBookCenter
+  #weBookCancel
+  {
+    font-family: Campy;
+    font-size:7.5vh;
+    color: var(--red);
+    position:relative;
+    top:40%;
+    
+  
+  }
+ #weBookCenter
   {
     font-family: HabboFont;
     color: var(--blue);
@@ -35,7 +45,8 @@
     top:40%;
     left:40%;
   
-  }
+  } 
+  
   #access
   {
     color: var(--blue);

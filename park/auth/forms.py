@@ -1,10 +1,11 @@
 
 from flask_wtf import FlaskForm
 from pyparsing import alphanums
-from wtforms import StringField, PasswordField, BooleanField,SubmitField,validators,ValidationError,SelectField
+from wtforms import StringField, PasswordField, BooleanField,SubmitField,validators,ValidationError,SelectField,DateField
 from wtforms.validators import DataRequired, Length, Email,EqualTo,NumberRange,InputRequired
 from park.models import UserMixin, User
 from wtforms_validators import ActiveUrl, Alpha, AlphaDash, AlphaSpace,Integer,AlphaNumeric
+from datetime import datetime
 
 
 #several flask forms for login,booking,signup excetra
@@ -22,10 +23,8 @@ class ChoiceForm(FlaskForm):
         site_type = SelectField('Enter Site Type. ',choices=['','Campsite','Cabin','Group','Backcountry'],validators=[DataRequired()],render_kw={'style': 'width: 28ch'})
         campground = SelectField('Enter Outer Campground . ',choices=[''],validators=[],render_kw={'style': 'width: 28ch'})
         inner_campground = SelectField('Enter inner Campground. ',choices=[''],validators=[],render_kw={'style': 'width: 28ch'})
-        arrival_month = SelectField('ENTER ARRIVAL MONTH.',choices=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'],validators = [DataRequired()],render_kw={'style': 'width: 28ch'})
-        arrival_day = StringField('ENTER ARRIVAL DAY.',validators = [DataRequired(),Length(min=1,max=2,message= 'The value should between 1 & 31'),Integer()],render_kw={'style': 'width: 28ch'})
+        arrival_date = DateField('Enter Date (YYYY-MM-DD)', format='%Y-%m-%d',validators = [DataRequired()],render_kw={'style': 'width: 28ch'})
         contact_num = StringField('Enter Contact number.',validators = [DataRequired(),Length(min=10,max=10,message= '10 digit phone number'),Integer()],render_kw={'style': 'width: 28ch'})
-        arrival_year = StringField('ENTER ARRIVAL Year.',validators = [DataRequired(),Length(min=4,max=4,message= 'Enter year of stay'),Integer()],render_kw={'style': 'width: 28ch'})
         nights = StringField('NIGHTS, 14 MAX.',validators = [DataRequired(),Length(min=1,max=2,message= 'The value should between 1 & 14'),Integer()],render_kw={'style': 'width: 28ch'})
         equiptment = SelectField('ENTER EQUIPTMENT.',choices=['','1 Tent','2 Tents','3 Tents','Van/Camper','Trailer up to 18ft','Trailer or RV up to 32ft','Trailer or RV over 32ft'],validators = [DataRequired()],render_kw={'style': 'width: 28ch'})
         postal_code = StringField('ENTER POSTAL CODE.',validators =[DataRequired(), Length(min=6,max=6,message= 'The value should be in  A1A 1A1 format'),AlphaNumeric()],render_kw={'style': 'width: 28ch'})
@@ -41,13 +40,20 @@ class ChoiceForm(FlaskForm):
         mm = StringField('ENTER EXPIRY MONTH.',validators = [DataRequired(),Length(min=2,max=2),Integer()],render_kw={'style': 'width: 28ch'})
         yy = StringField('ENTER EXPIRY YEAR.',validators = [DataRequired(),Length(min=4,max=4,message="4 digit expiry year, ex 2023"),Integer()],render_kw={'style': 'width: 28ch'})
         code = StringField('ENTER SECURITY CODE.',validators = [DataRequired(),Length(min =3,max=4,message="3-4 digit CVV code."),Integer()],render_kw={'style': 'width: 28ch'})
-        occupant_first_name = StringField('ENTER OCCUPANT FIRST NAME .',validators = [Alpha()],render_kw={'style': 'width: 28ch'})
-        occupant_last_name  = StringField('ENTER OCCUPANT LAST NAME .',validators = [Alpha()],render_kw={'style': 'width: 28ch'})
-        occupant_postal_code  = StringField('ENTER OCCUPANT LAST NAME .',validators = [AlphaNumeric()],render_kw={'style': 'width: 28ch'})
-        occupant_address  = StringField('ENTER OCCUPANT LAST NAME .',validators = [AlphaNumeric()],render_kw={'style': 'width: 28ch'})
-        occupant_phone_num  = StringField('ENTER OCCUPANT LAST NAME .',validators = [AlphaNumeric(),Length(10,10)],render_kw={'style': 'width: 28ch'})
+        occupant = BooleanField('CLICK IF NOT OCCUPANT')
+        occupant_first_name = StringField('ENTER OCCUPANT FIRST NAME.',validators = [Alpha()],render_kw={'style': 'width: 28ch'})
+        occupant_last_name  = StringField('ENTER OCCUPANT LAST NAME.',validators = [Alpha()],render_kw={'style': 'width: 28ch'})
+        occupant_postal_code  = StringField('ENTER OCCUPANT POSTAL CODE.',validators = [AlphaNumeric()],render_kw={'style': 'width: 28ch'})
+        occupant_address  = StringField('ENTER OCCUPANT ADDRESS.',validators = [AlphaNumeric()],render_kw={'style': 'width: 28ch'})
+        occupant_phone_num  = StringField('ENTER OCCUPANT PHONE NUM.',validators = [AlphaNumeric(),Length(10,10)],render_kw={'style': 'width: 28ch'})
         submit = SubmitField('Submit')
-
+        
+        def validate_date(self,arrival_date):
+                if arrival_date < datetime.now().date():
+                        return False
+                else:
+                       return True      
+      
 class cancelBookingForm(FlaskForm):
        
        park = StringField('ENTER Park.',validators = [Alpha(),DataRequired()],render_kw={'style': 'width: 28ch'})

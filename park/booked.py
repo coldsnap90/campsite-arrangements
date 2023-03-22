@@ -24,13 +24,13 @@ import os
 import selectors
 import time
 import threading
-#from memory_profiler import memory_usage,profile
-#fp = open('./memory_profile_app.log','w+')
+from memory_profiler import memory_usage,profile
+fp = open('./memory_profile_app.log','w+')
 
 #bot program
 
 #delete reservation when an error occurs to far into the process
-#@profile(stream=fp)
+@profile(stream=fp)
 def delete_reservation(browser,waits,Action):
     '''deletes reservation'''
     flag = True
@@ -63,7 +63,7 @@ def delete_reservation(browser,waits,Action):
         else:
             flag = advisory(browser,waits)
 '''
-#@profile(stream=fp)
+@profile(stream=fp)
 def occupant(browser,waits,Action,b_info):
     '''navigates occupant page and enters in extra occupant info'''
     occupant_Fname = waits.until(EC.presence_of_element_located((By.XPATH,"//input[contains(@id,'first-name-field-')]")))
@@ -107,7 +107,7 @@ def occupant(browser,waits,Action,b_info):
     except:
          return False
     
-#@profile(stream=fp)
+@profile(stream=fp)
 def proceed_to_checkout(browser,waits,Action,b_info):
     '''navigates checkpout page and logs into account'''
     n = 5
@@ -128,7 +128,7 @@ def proceed_to_checkout(browser,waits,Action,b_info):
     
     except:
         return False
-#@profile(stream=fp)
+@profile(stream=fp)
 def confirm_reservation(browser,waits,Action):
     '''navigates initial reservation page'''
     flag1 = True
@@ -193,7 +193,7 @@ def confirm_reservation(browser,waits,Action):
                 return True
             except:
                 return False
-#@profile(stream=fp)
+@profile(stream=fp)
 def confirm_acknowledgements(waits):
     '''navigfates acknowledgements page'''
     try:
@@ -223,7 +223,7 @@ def confirm_acknowledgements(waits):
 
     if counter == 10:
          return False
-#@profile(stream=fp)
+@profile(stream=fp)
 def confirm_details(waits):
     '''navigates the details page'''
     try:
@@ -231,7 +231,7 @@ def confirm_details(waits):
         return True
     except:
         return False
-#@profile(stream=fp)
+@profile(stream=fp)
 def confirm_occupant(browser,waits,Action,u_info,b_info):
     '''navigates the occupants page'''
     if b_info.occupant == True:
@@ -288,7 +288,7 @@ def confirm_occupant(browser,waits,Action,u_info,b_info):
                             return True
                 except:
                    return False
-#@profile(stream=fp)
+@profile(stream=fp)
 def confirm_party_info(browser,waits,Action):
     '''navigates the party info page'''
     counter = 0
@@ -316,7 +316,7 @@ def confirm_party_info(browser,waits,Action):
 
     except:
         return False
-#@profile(stream=fp)
+@profile(stream=fp)
 def confirm_addons(browser,waits,Action):
     '''navigates the confirm addons page'''
     flag = True
@@ -360,7 +360,7 @@ def confirm_addons(browser,waits,Action):
             
     if counter == 10:
          return False
-#@profile(stream=fp)
+@profile(stream=fp)
 def confirm_purchases(browser,waits,Action,s_info):
     '''using the stripe api it makes a request for credit card details and pays for the campsite'''
     card = waits.until(EC.presence_of_element_located((By.ID,'cardNumber')))
@@ -459,28 +459,31 @@ def no_sites(browser,waits):
     except:
         pass
     return flag
-#@profile(stream=fp)
+@profile(stream=fp)
 def escape(Action):
     '''escapes some click function'''
     Action.key_down(Keys.ESCAPE).perform()
     Action.key_up(Keys.ESCAPE).perform()
-#@profile(stream=fp)
+@profile(stream=fp)
 def backspace(Action):
     '''deletes some inpits'''
     Action.key_down(Keys.BACKSPACE).perform()
     Action.key_up(Keys.BACKSPACE).perform()
-#@profile(stream=fp)
+@profile(stream=fp)
 def pick_month(browser,waits,Action,month):
     '''checks for month of request booking and clicks it'''
+    print('month ',month)
     siteEntryMonthText=[]
     flag = True
     date_list = month.split(' ')
     year = date_list[1]
+    print(year)
     flag = False
     siteEntryMonthNext = browser.find_element(By.ID,'nextYearButton')
     siteEntryMonth = browser.find_element(By.CSS_SELECTOR,'#monthDropdownPicker').click()
     while flag == False:
         try:
+            print('finding')
             x = browser.find_element(By.CLASS_NAME,'mat-calendar-body-label').text
             if x != date_list[1]:
                  siteEntryMonthNext.click()
@@ -492,8 +495,9 @@ def pick_month(browser,waits,Action,month):
         except:
             pass
     return True
-#@profile(stream=fp)
-def pick_day(browser,waits,Action,b_info):
+
+@profile(stream=fp)
+def pick_day(browser,waits,Action,day):
     '''checks for day of request bookinf and clicks it'''
     flag = True
     siteEntryDateText=[]
@@ -507,7 +511,7 @@ def pick_day(browser,waits,Action,b_info):
             if counter > 31:
                 flag = False
                 return False
-            if(date.text == b_info.arrival_day):
+            if(date.text == day):
                 date.click()
                 flag = False
                 break
@@ -517,7 +521,7 @@ def pick_day(browser,waits,Action,b_info):
     return True
 
 #logins in to bc parks account
-#@profile(stream=fp)
+@profile(stream=fp)
 def login(browser,waits,b_info):
     found = waits.until(EC.presence_of_element_located((By.ID,'email')))
     email = browser.find_element(By.ID,"email")
@@ -532,10 +536,11 @@ def login(browser,waits,b_info):
         type_speed(password,b_info.password)
     else:
         login(browser,waits,b_info)
-    waits.until(EC.presence_of_element_located((By.ID,'loginButton'))).click()
+    b = 'Sign In'
+    waits.until(EC.presence_of_element_located((By.XPATH,"//div[contains(@class,'button-contents') and (text(),'%s')]" % b))).click()   
  
 #if booking is a double site,this func executes
-#@profile(stream=fp)
+@profile(stream=fp)
 def double_site(browser,waits,Action,u_info,b_info,s_info):
     flag1 = True
     while flag1 == True:
@@ -724,14 +729,19 @@ def double_site(browser,waits,Action,u_info,b_info,s_info):
 
 #main function for booking, called from the job function
 
-#@profile(stream=fp)
+@profile(stream=fp)
 def reservation(browser,waits,Action,u_info,b_info,s_info):
  #       @profile(stream=fp)
         def mytimer():
             print('timer start')
             sleep(300)
             print('browser closing')
-            browser.quit()
+            try:
+                print('close')
+                browser.close()
+            except:
+                print('quoit')
+                browser.Quit()
         try:
             print('thread start')
             x = threading.Thread(target=mytimer)
@@ -741,7 +751,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
 
         browser.implicitly_wait(5)
         doc_ready =wait(browser, 20).until(lambda browser: browser.execute_script('return document.readyState') == 'complete')
-        web = browser.get('https://camping.bcparks.ca/')
+        browser.get('https://camping.bcparks.ca/')
 
         print('\n\n')
         flag = True
@@ -762,13 +772,15 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
         '''
         month = str(b_info.arrival_date)
         date_list = month.split('-')
+        day = date_list[2]
         arr_mon = str(date_list[1])
-        months = {'01':'JAN','02':'FEB','03':'MAR','04':'APR','05':'MAY','06':'JUN','07':'JUL','08':'AUG','09':'SEPT','10':'OCT','11':'NOV','12':'DEC'} 
+        months = {'01':'JAN','02':'FEB','03':'MAR','04':'APR','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sept','10':'Oct','11':'Nov','12':'Dec'} 
         if arr_mon in months:
             month = months[arr_mon]
             month = month + ' '+date_list[0]
-            print('month ',month)
         d2 = datetime(int(date_list[0]),int(date_list[1]),int(date_list[2]),6,59,59,59)
+        print('month : ',month)
+        print('day : ',day)
         #consent
         try:
             waits.until(EC.visibility_of_element_located((By.ID,'consentButton')))
@@ -832,7 +844,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                 return False,end,s1,'pick month'
             #pick day
         try:
-                day_picked = pick_day(browser,waits,Action,b_info)
+                day_picked = pick_day(browser,waits,Action,day)
                 if day_picked == False:
                     end = time.time()
                     s1 = False
@@ -977,6 +989,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
             except:
                 pass
             if found_counter > 5:
+                    browser.close()
                     end = time.time()
                     s1 = False
                     x = 'site search'

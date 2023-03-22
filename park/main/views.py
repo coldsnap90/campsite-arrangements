@@ -42,6 +42,7 @@ def admin():
     else:
         return render_template('/admin/index.html',title = 'Admin Login')
 
+
 #ignore these functions below,they were all used in pseudo-testing the app and database querying
 
 @main.route('/deldata',methods=['GET','POST'])

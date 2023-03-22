@@ -1,0 +1,62 @@
+---------------------------------------------App Documentation---------------------------------------------------------------------------
+
+1. Introduction
+        
+        This Web app titled 'WeBook' is developed using Flask,a lightweight micro framework utilizing the python language. The front end of the application
+is utilizing HTML,CSS, and bootstrap with a small amount of Javascript for some dynamic features of the application. The application is primarily used
+for scanning and booking the BC parks websites. The competiton for prime campsites is very fierce, especially at 07:00 hours four months before the
+date expected. This app is currently operating solely on this website. The application makes use of the stripe API for payment processing.
+Several flask libraries and other python libraries are used in the execution of this application. Users can expect to enter in some information 
+along with a site requests and the application will search for their request on some time interval requested.
+
+2. Installation
+
+        There is no installation required for users to use this application, it is all available to the public at the domain : https://webookcamp.herokuapp.com/
+
+3. Configuration
+
+        There is two configurations, production and testing. The env variable in the the config.py file needs to set to 'dev' for the testing on localhost
+and set to 'env' for the production. In the testing env, the SERVER_NAME is the local domain and the databases for apscheduler jobstore, users, parks
+are created with db files. The production server is set to the heroku domain the application resides online along with the postgresql database add on 
+for the application. There is a back up on the POSTGRESQL database locally aswell. The requirements.txt file has all the required libraries to run
+this application as well.
+
+4. usage
+
+        The app can be accessed at https://webookcamp.herokuapp.com/, the user will have to create a new account to access any features. After an accounrt
+is created a token will be emailed to given address to confirm the account. Upon login you will be directed to the book route. A booking cannot be 
+made until two conditions have nbeen met, the user needs to confirm their account as stated above and the user needs to subscribe to plan on the 
+payment route. Upon selecting a plan you will be redirecting to the stripe secure checkout process where you will enter credit details, once that is
+completed a webook will be received by the app to change the status off your account. After those actions have been taken you will be redriected to a page
+indicating the success or failure of the payment. Upon success you will see the form on book route. The form will have to be completed, it has Several
+error checking features to make sure the right information is entered, their is also a secondary JS alert warning the user of entering incorrect informnation
+such as the wrong campsite or adding to many people to the party. After the form is completed, several checks will occur to see which plan you have
+purchased and if your allowed to make a booking or not. The program requires you to trust us with your bc parks log in to make the booking for you. your
+information is stored on our secure database until a booking is made then it will be deleted. There is an accountDetails route where you can edit your profile
+information, cancel a booking, or delete your account. There is a help route for FAQ, along with a link to the BC Parks site. The app uses the 
+python selenium library couple with the apscheduler library to automate the booking of your campsite. 
+
+5. Technical
+
+        The app uses Flask's application factory pattern to initialize the app. __init__.py file creates the flask application,initializes plugins,
+sets up databases and registers blueprints. The two blueprints, 'main' and 'auth' all contain an __init__,form,and views .py file. All forms
+are created with WTFORMS and are handled with FLASK_WTF library. The forms use jinja templates which protects from CSRF attacks. The auth views.py
+imports ChoiceForm,signupForm,updateForm,passwordResetForm,LoginForm,productForm,redirectForm,testForm,cancelForm,adminForm,requestResetForm,cancelBookingForm
+all from forms.py. Most forms are self explanatory. There are several routes in the views.py, most are self explanatory as well. A few important routes are,
+the 'book' route which functions as an integral part of the program it processes form data, modifies the user account and the stripe user account. An SQL alchemy
+object is created and the form data fills its attrivutes. That data is send to scheduling route 'setTask'. The setTask route makes a couple checks on the User and BookingData objects and attributes.
+Account status, subscription, amount of current scans are verified then the bookingData object is processed, The attribute arrival_date is processed
+and send to apscheduler method add_job(), a job will be initialize with some start time and end time at the request date. After the job is created, you
+can see the current booking your account details. The job will persist in the database until its complete. When a job has started the method schedule_site
+is called to run the job, it takes an instance attribute of User_id and  BookingData instance via the *Args parameter. The method calls the database to 
+get all User information from the User object which stores all the profile information and some information needed in the stripe api calls to get custonmer info.
+a Selenium webdriver instance is created and the reservation method from the booking.py file is called, the webdriver instance, the webdriver wait instance,
+user instance, BookingData instance,and stripe api call method. The booked.py script is ran and thne program navigates through the whole process of locating
+and purchasing a campsite rental. The schedule_site method is ran on some interval based on the subscription purchases, ex. 5 - 60 min intervals of scanning and booking
+a site. After a successful booking the job instance is destroyed. The main blueprint contains a view routes that are inconsequential to the program besdies
+the create_admin route which its only possible for one admin to be created which is myself. The models.py file contains the declared models User,BookingData,Park, and site classes.
+The User object contains all user attributes and methods for modifying said attributes. The BookingData object contains all attributes involved in booking the sites
+along with a few methods for generating a confirmation token in an email for a successful booking. The park model contains every park listed on the BC parks site, and the sites
+model in the child of Park class where all sites in each park are mapped to it via the relationship function and the many to one pattern. essentially
+signUp() route -> login() route -> book() route -> payment() route -> success() route -> book() route ->setTask() route -> schedule_site(*args)->
+booked.py bot script. This is what the user would experience using the application.

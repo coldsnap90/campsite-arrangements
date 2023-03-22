@@ -158,14 +158,7 @@
             {% endfor %}
             </div>    
         </div>
-        <div class = 'row rounded' id = 'accRow'>
-            <div class = 'col' id ='accText'>
-            <u>Account status:</u> 
-            <p class = 'accTextInfo'> <br>{% if data.confirmed == True %} Account Verified {% else %} Account Unverified {% endif%} 
-            </p>
-            </div>
-        </div>
-
+     
         <div class = 'row text-center mt-3'>
             <div class = 'col'>
                 <a class = "btn btn-warning" id = 'accUp' href="{{url_for('auth.edit_account_details')}}"> Update Account </a> <br>

@@ -70,9 +70,7 @@ class BookingData(db.Model):
     site_type = db.Column(db.String(50))
     campground = db.Column(db.String(50))
     inner_campground = db.Column(db.String(50))
-    arrival_month = db.Column(db.String(10))
-    arrival_day = db.Column(db.String(5))
-    arrival_date = db.Column(db.String(20))
+    arrival_date = db.Column(db.Date())
     nights = db.Column(db.String(5))
     equiptment = db.Column(db.String(50))
     email = db.Column(db.String(50))
@@ -91,7 +89,7 @@ class BookingData(db.Model):
 
 
     def __repr__(self):
-        return f"User({self.park},{self.site},{self.site_type},{self.campground},{self.inner_campground},{self.arrival_date},{self.arrival_month},{self.arrival_day},{self.party_size},{self.nights},{self.equiptment},{self.email},{self.password},{self.contact_num},{self.logged},{self.booked},{self.occupant}\
+        return f"User({self.park},{self.site},{self.site_type},{self.campground},{self.inner_campground},{self.arrival_date},{self.party_size},{self.nights},{self.equiptment},{self.email},{self.password},{self.contact_num},{self.logged},{self.booked},{self.occupant}\
         ,{self.occupant_first_name},{self.occupant_last_name},{self.occupant_address},{self.occupant_postal_code},{self.occupant_phone_num}"
         
     def set_site(self,site):
@@ -155,7 +153,7 @@ class User(db.Model,UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer,primary_key = True)
     email = db.Column(db.String(100),unique=True)
-    password = db.Column(db.String(20))
+    password = db.Column(db.String(100))
     firstName = db.Column(db.String(20))
     lastName = db.Column(db.String(20))
     confirmed = db.Column(db.Boolean,default = False)
@@ -370,10 +368,10 @@ admin.add_view(ModelView(BookingData,db.session))
 class bookingTimeTest(db.Model):
     id = db.Column(db.Integer,primary_key= True)
     site = db.Column(db.String(50))
-    time_delta = db.Column(db.String(20))
-    date_delta = db.Column(db.String(20))
+    time_delta = db.Column(db.String(50))
+    date_delta = db.Column(db.String(50))
     success = db.Column(db.Boolean,default=False)
-    failed_at = db.Column(db.String(20))
+    failed_at = db.Column(db.String(75))
     failed_number = db.Column(db.Integer)
     def __repr__(self):
         return f"Time (' time delta '{self.time_delta}', - date delta : '{self.date_delta}', - Success : '{self.success}', - Fail : '{self.failed_at}', - Site : '{self.site}', - failed numbers : '{self.failed_number}'"

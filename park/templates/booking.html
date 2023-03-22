@@ -8,7 +8,14 @@
    
     
     {{super()}}
-   
+    
+    {% if error %}
+                            <div class ='row'>
+                                <div class ='col'>
+                                    <span id = 'loginError'> Invalid Date entry </span>
+                                </div>
+                            </div>
+    {% endif %}
     <div class ='container-fluid' id = 'bookingHolder'>
     <form method = 'POST' action='' name ='value' id = 'bookingForm'>
         <div class="row">
@@ -54,16 +61,6 @@
 
                 <div class="row mt-3">
                     <div class = 'col' id = 'bookField'>
-                        {{form.arrival_day.label(class = 'text_')}}<br>
-                        {{form.arrival_day}}
-                    </div>
-                    <div class = 'col' >
-                        {{form.arrival_month.label(class = 'text_')}}<br>
-                        {{form.arrival_month()}}
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <div class = 'col' id = 'bookField'>
                         {{form.campground.label(class = 'text_')}}<br>
                         {{form.campground}}
                     </div>
@@ -72,17 +69,16 @@
                         {{form.inner_campground}}
                     </div>
                 </div>
-                
-                <div class="row mt-3">
-                    <div class = 'col' id = 'bookField'>
-                        {{form.arrival_year.label(class = 'text_')}}<br>
-                        {{form.arrival_year()}}
-                    </div>
-                    <div class = 'col' >
-                        {{form.contact_num.label(class='text_')}}<br>
-                        {{form.contact_num()}}
-                    </div>
+            <div class="row mt-3">
+                <div class = 'col' id = 'bookField'>
+                    {{form.contact_num.label(class='text_')}}<br>
+                    {{form.contact_num()}}
                 </div>
+                <div class = 'col' >
+                    {{form.arrival_date.label(class='text_')}}<br>
+                    {{form.arrival_date()}}
+                </div>
+            </div>
                 
                 
                 <div class = "row mt-5">
@@ -141,7 +137,7 @@
                 </div>
 
                 <div class = "row mt-3">
-                    <div class = 'col text-center'>
+                    <div class = 'col' id = 'bookField'>
                         {{form.mm.label(class = 'text_')}}<br>
                         {{form.mm}}
                     </div>
@@ -162,28 +158,31 @@
                             {{form.occupant_last_name}}
                         </div>
                     </div>
-                <div class = "row mt-5" >
-                    <div class = 'col' id = 'bookField'>
                 
-                        {{form.occupant_postal_code.label(class = 'text_')}}<br>
-                        {{form.occupant_postal_code}}
+
+                    <div class = "row mt-5" >
+                        <div class = 'col' id = 'bookField'>
+                            {{form.occupant_address.label(class = 'text_')}}<br>
+                            {{form.occupant_address}}
+                        </div>
+                        <div class = 'col'>
+                            {{form.occupant_phone_num.label(class = 'text_')}}<br>
+                            {{form.occupant_phone_num}}
+                        </div>
                     </div>
-                </div>
-                <div class = "row mt-5" >
-                    <div class = 'col' id = 'bookField'>
-                        {{form.occupant_address.label(class = 'text_')}}<br>
-                        {{form.occupant_address}}
+                    <div class = "row mt-5" >
+                        <div class = 'col-6 offset-2'>
+                    
+                            {{form.occupant_postal_code.label(class = 'text_')}}<br>
+                            {{form.occupant_postal_code}}
+                        </div>
                     </div>
-                    <div class = 'col'>
-                        {{form.occupant_phone_num.label(class = 'text_')}}<br>
-                        {{form.occupant_phone_num}}
-                    </div>
-                </div>
+                
                 </div>
 
                 <div class = 'row mt-5 mb-3 text-center'>
                     <div class = 'col-6 offset-2' >
-                        <button class = 'btn btn-default' onclick="myFunction()">If occupant is someone else, click this</button>
+                        <button class = 'btn btn-default' onclick="myFunction()">{{form.occupant }}If occupant is someone else, click this</button>
                     </div>
                 </div>
         <div class = 'row mt-5 mb-3 text-center'>
