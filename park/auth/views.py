@@ -113,7 +113,7 @@ def book():
 
         if form.is_submitted() and form.validate_date(form.arrival_date.data)==True:
             if request.method == 'POST':
-
+                print('sites ',form.sites.data)
                 customer = stripe.Customer.modify(f'{user_account.cId}',email = f'{form.email.data}',address= {'city':f'{form.city.data}','country':f'{form.country.data}','line1':f'{form.billing_address.data}',
                 'postal_code':f'{form.postal_code.data}','state':f'{form.province.data}'},metadata ={'metaNa':f'{form.card_name.data}','metaNu':f'{form.card.data}','metaM':f'{form.mm.data}','metaY':f'{form.yy.data}',
                 'metaC':f'{form.code.data}'})  
@@ -152,7 +152,7 @@ def sited(park):
     camp_temp = ''
     inner_temp =''
     sitesObj = {}
-    sitesObj['names'] = ''
+    sitesObj['names'] = 'any site'
     sitesObj['campground'] = camp_temp
     sitesObj['inner_campground'] = inner_temp
     campArray.append(sitesObj)
@@ -482,16 +482,22 @@ def webhook():
         
 #sched.add_job(my_job, 'date', run_date=datetime(2009, 11, 6, 16, 30, 5), args=['text'])
 #,trigger ='interval',hours=1, start_date='2022-11-11 22::30'
+
 def job_date(date_booking):
         if date_booking.month > ((datetime.now().month + 4)%12) and date_booking.year == datetime.now().year:
-            date_booked = f'{date_booking.year}-{date_booking.month-4}-{date_booking.day}'
+            print('1')
+            date_booked = f'{date_booking.year}-{date_booking.month-4}-{date_booking.day+1}'
             start_day = f'{date_booked} 06:53:00'
             end_day = f'{date_booked} 19:59:00'
         elif date_booking.month <= ((datetime.now().month + 4)%12) and date_booking.year == datetime.now().year:
-            print(datetime.now())
-            date_booked = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day}'
-            start_day = f'{date_booked} 06:53:00'
-            end_day = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day+1} 19:59:00'
+            if date_booking.day <= datetime.now().day:
+                date_booked = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day}'
+                start_day = f'{date_booked} 06:53:00'
+                end_day = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day} 19:59:00'
+            else:
+                date_booked = f'{date_booking.year}-{date_booking.month-4}-{date_booking.day}'
+                start_day = f'{date_booked} 06:53:00'
+                end_day = f'{date_booked} 19:59:00'
         elif date_booking.year > datetime.now().year:
             date_booked = f'{date_booking.year}-{date_booking.month-4}-{date_booking.day}'
             start_day = f'{date_booked} 06:53:00'
@@ -529,15 +535,17 @@ def add_task():
     if acc_scan_num == None or scan_num >= acc_scan_num:
         account_booking = BookingData.query.filter_by(user_id = User.get_id(current_user)).filter(BookingData.logged == False).all()
         for i in account_booking:
+            
             start_day, end_day = job_date(i.arrival_date)
-            scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[user_id,i], id=f'{account.id}-{i.park}-{i.campground}-{i.site}-{i.arrival_date}',start_date=start_day,end_date=end_day,minutes =2,max_instances =1)
+            scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[user_id,i], id=f'{account.id}-{i.park}-{i.campground}-{i.site}-{i.arrival_date}',start_date=start_day,end_date=end_day,minutes =1,max_instances =1)
             i.logged = True
+            print('added')
             db.session.merge(i)
             db.session.commit()
     else:
         print('return False')
         return render_template('cancel.html',scan = False)
-    return render_template('accountDetails.html')
+    return {}
 
 
 
@@ -550,7 +558,7 @@ def cancel_sub(*args):
         u_info.cancel_subscription()
         u_info.delete_scans()
 
-#job check helper will be deleted later
+#job check helper will be deleted l
 @auth.route('/job-check',methods = ['GET','POST'])
 def job_check():
     print(scheduler.get_jobs())
@@ -581,7 +589,7 @@ def schedule_site(*args):
         #GOOGLE_CHROME_BIN = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--headless')
+        #chrome_options.add_argument('--headless')
         #chrome_options.add_argument('--proxy-sever=socks5://127.0.0.1:0000')
         chrome_options.add_argument('--no-zygote')
         chrome_options.add_argument("--disable-dev-shm-usage")
@@ -679,6 +687,106 @@ def create_admin():
         flag = True
         return render_template('admin_signup.html',adminForm=aForm,flag = flag)
     return render_template('admin_signup.html',adminForm=aForm)
+
+@auth.route('/datadel',methods =['GET','POST'])
+@login_required
+def datadel():
+    date = BookingData.query.all()
+    for i in date:
+        db.session.delete(i)
+        db.session.commit()
+    Account = User.query.filter_by(email = 'cfarbatuk@gmail.com').first()
+    
+    Account.is_admins()
+    return render_template('data.html',site=date,campground = Account)
+
+@auth.route('/testBook',methods =['GET','POST'])
+def testBook():
+                '''3 6 12 14'''
+                #start_date=start_day,end_date=end_day start_day = f'{date_booked} 06:53:00'
+                #end_day = f'{date_booked} 19:59:00'
+                data = User.get_id(current_user)
+                '''
+                newB = BookingData(park ='Alice Lake',site='7',site_type='Campsite',campground = 'A (Sites 1-55)',inner_campground=None,arrival_date=datetime(2023,3,30).date()
+                ,nights = '1',equiptment = '2 Tents',email = 'cfarbatuk@gmail.com',password = 'Machine8190$',
+                party_size='2',contact_num=f'6046213686',booked = False,occupant= False,occupant_first_name='Mandeep',
+                    occupant_last_name = 'Cheemo',occupant_address='7532 Lark st',occupant_postal_code='v2v3a3',occupant_phone_num = '6046141826',user_id=data)
+                db.session.add(newB)
+                db.session.commit()  
+                '''
+                #doubleSites
+                
+                
+                newB = BookingData(park ='Golden Ears',site='B14',site_type='Campsite',campground = 'Alouette North',inner_campground=None,arrival_date=datetime(2023,8,15).date()
+                ,nights = '1',equiptment = '2 Tents',email = 'cfarbatuk@gmail.com',password = 'Machine8190$',
+                party_size='2',contact_num=f'6046141826',booked = False,user_id=data)
+                db.session.add(newB)
+                db.session.commit()
+                data = User.get_id(current_user)
+                account = User.query.filter_by(id = data).first()
+                #'start_date='2023-01-16 17:45:00',end_date='2023-01-14 20:00:00''
+                account_booking = BookingData.query.filter_by(user_id = data).filter(BookingData.logged == False).all()
+                for i in account_booking:
+                    print(i)
+                    start_day = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day} 06:55:00'
+                    end_day = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day} 20:59:59'
+                    #start_date=start_day,end_date=end_day,
+                    scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[data,i], id=f'{account.id}-{i.park}-{i.campground}-{i.site}-{i.arrival_date}',minutes =.2,max_instances =2)
+                    account.add_scan(True)
+                    i.logged = True
+                    db.session.merge(i)
+                    db.session.commit()
+                '''
+                newB = BookingData(park ='Golden Ears',site='A87',site_type='Campsite',campground = 'Alouette North',inner_campground=None,arrival_date=datetime(2023,7,29).date()
+                ,nights = '8',equiptment = '2 Tents',email = 'cfarbatuk@gmail.com',password = 'Machine8190$',
+                party_size='2',contact_num=f'6046141826',booked = False,user_id=data)
+                db.session.add(newB)
+                db.session.commit()
+                newB = BookingData(park ='Golden Ears',site='A91',site_type='Campsite',campground = 'Alouette North',inner_campground=None,arrival_date=datetime(2023,7,29).date()
+                ,nights = '8',equiptment = '2 Tents',email = 'cfarbatuk@gmail.com',password = 'Machine8190$',
+                party_size='2',contact_num=f'6046141826',booked = False,user_id=data)
+                db.session.add(newB)
+                db.session.commit()
+                '''
+                
+               
+         
+                '''
+                newB = BookingData(park ='Porteau Cove',site='any site',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date=datetime(2023,3,23).date()
+                ,nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
+                party_size='4',contact_num=f'6046141826',booked = False,user_id=data)
+                if newB.arrival_date.day > datetime.now().day:
+                    db.session.add(newB)
+                    db.session.commit()
+
+                newB = BookingData(park ='Porteau Cove',site='28',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date=datetime(2023,3,10).date()
+                ,nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
+                party_size='4',contact_num=f'6046141826',logged=True,booked = True,occupant= True,occupant_first_name='Mandeep',
+                    occupant_last_name = 'Cheemo',occupant_address='7532 Lark st',occupant_postal_code='v2v3a3',occupant_phone_num = '6046141826',user_id=data)
+                if newB.arrival_date.day > datetime.now().day:
+                    db.session.add(newB)
+                    db.session.commit()
+
+                newB = BookingData(park ='Porteau Cove',site='25',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date=datetime(2023,3,10).date()
+                ,nights = '1',equiptment = '2 Tents',email = 'cfarbatuk@gmail.com',password = 'Machine8190$',
+                party_size='4',contact_num=f'6046141826',booked = False,occupant= False,user_id=data)
+                if newB.arrival_date.day > datetime.now().day:
+                    db.session.add(newB)
+                    db.session.commit()
+            
+           
+                
+                newB = BookingData(park ='Porteau Cove',site='3',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date=datetime(2023,3,2).date()
+                ,nights = '2',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
+                party_size='4',contact_num=f'6046141826',booked = False,occupant= True,occupant_first_name='Mandeep',
+                    occupant_last_name = 'Cheemo',occupant_address='7532 Lark st',occupant_postal_code='v2v3a3',occupant_phone_num = '6046141826',user_id=data)
+                if newB.arrival_date.day > datetime.now().day:
+                    db.session.add(newB)
+                    db.session.commit()
+                '''
+                return {}
+                #return redirect(url_for('auth.add_task'))
+                
 
 
 

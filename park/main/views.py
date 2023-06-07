@@ -29,7 +29,11 @@ def admin():
         return render_template('admin_signup.html')
     else:
         return render_template('/admin/index.html',title = 'Admin Login')
+@main.route('/checkuser',methods=['GET','POST'])
+def check_user():
+    
+    Account = bookingTimeTest.query.all()
+    db.session.delete(Account)
+    db.session.commit()
 
-
-#ignore these functions below,they were all used in pseudo-testing the app and database querying
-
+    return render_template('data.html',data = Account)

@@ -31,7 +31,7 @@
         <div class ='formClass'>
                 <div class="row">
                     <div class ='col'>
-                    {{login_form.csrf_token }}<br>
+                    {{login_form.csrf_token() }}<br>
                     </div>
                 </div> 
 
@@ -77,7 +77,7 @@
         <div class ='formClass'>
                     <div class ='row'>
                         <div class = col>
-                            {{resetForm.csrf_token}}
+                            {{resetForm.csrf_token()}}
                         </div>
                     </div>
 

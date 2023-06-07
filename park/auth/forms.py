@@ -19,7 +19,7 @@ class ChoiceForm(FlaskForm):
                            'Rathtrevor Beach','Red Bluff','Rolley Lake','Rosebery','Saltery Bay','Sasquatch','Shuswap Lake','Silver Lake','Skagit Valley','Smelt Bay','Sowchea Bay','Sproat Lake','Stamp River','Stemwinder','Strathcona',
                            'Summit Lake','Swan Lake','sw̓iw̓s (Haynes Point)','sx̌ʷəx̌ʷnitkʷ (Okanagan Falls)','Syringa','Ten Mile Lake','Tweedsmuir South','Tyhee Lake','Tā Ch’ilā (Boya Lake)','Wasa Lake','Wells Gray','Whiskers Point'],
                            validators=[DataRequired()],render_kw={'style': 'width: 28ch'})
-        sites = SelectField('Enter Site #. ',choices=[''],validators=[],render_kw={'style': 'width: 28ch'})
+        sites = SelectField('Enter Site #. ',choices=[],validators=[],render_kw={'style': 'width: 28ch'})
         site_type = SelectField('Enter Site Type. ',choices=['','Campsite','Cabin','Group','Backcountry'],validators=[DataRequired()],render_kw={'style': 'width: 28ch'})
         campground = SelectField('Enter Outer Campground . ',choices=[''],validators=[],render_kw={'style': 'width: 28ch'})
         inner_campground = SelectField('Enter inner Campground. ',choices=[''],validators=[],render_kw={'style': 'width: 28ch'})
