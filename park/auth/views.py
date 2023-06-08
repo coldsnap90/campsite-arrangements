@@ -31,6 +31,8 @@ import time
 import json
 import random
 import threading
+import logging
+import sys
 
 
 
@@ -573,6 +575,8 @@ def job_check():
 @auth.route('/rar',methods =['GET','POST'])
 def rar():
     scheduler.remove_all_jobs()
+    logging.basicConfig(stream=sys.stdout) 
+    logging.getLogger('apscheduler').setLevel(logging.DEBUG)
     return 'removed'
 def schedule_site(*args):
     print('starting Job')
