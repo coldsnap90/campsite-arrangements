@@ -408,7 +408,7 @@ def confirm_purchase(browser,waits,Action):
     flag = False
     while flag == False:
                 try:
-                    card_code = waits.until(EC.presence_of_element_located((By.ID,'applyPaymentButton'))).click()
+                    card_code = waits.until(EC.presence_of_element_located((By.ID,'applyPaymentButton')))
                     
                     card_codes = True
                     if card_codes:
@@ -529,6 +529,7 @@ def pick_day(browser,waits,Action,day):
 #logins in to bc parks account
 #@profile(stream=fp)
 def login(browser,waits,b_info):
+    print('login')
     found = waits.until(EC.presence_of_element_located((By.ID,'email')))
     email = browser.find_element(By.ID,"email")
     if bool(found) == True:
@@ -859,6 +860,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
 
         waits.until(EC.presence_of_element_located((By.ID,'mat-date-range-input-0')))
         element = waits.until(EC.presence_of_element_located((By.CSS_SELECTOR,'.mat-date-range-input-start-wrapper'))).click()
+        print('month picked')
         #pick month
         try:
                 month_picked = pick_month(browser,waits,Action,month)
@@ -873,6 +875,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                 s1 = False
                 return False,end,s1,'pick month'
             #pick day
+        
         try:
                 day_picked = pick_day(browser,waits,Action,day)
                 if day_picked == False:
@@ -885,6 +888,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                 s1 = False
                 x = 'pick day'
                 return False,end,s1,x
+        print('day picked')
 
             #Nights
         try:
@@ -978,6 +982,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
             return False,end,s1,x
 
             #second camp 
+        print('second camp')
         try:
             b = str(b_info.campground)
             b = b.lstrip().rstrip()
@@ -1073,7 +1078,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                                             x='greater then 4 months booking time'
                                             return False,end,s1,x                                             
                                              
-
+            print('site found')
                 #check for double
             flag = advisory(browser,waits)
             if flag == False:
@@ -1081,6 +1086,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
         if flag == False:
                 print('flag == false')
                 b =confirm_reservation(browser,waits,Action)
+                print('cr')
                 if b == False:
                     end = time.time()
                     s1 = False
@@ -1091,6 +1097,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
 
                 #checkout func
                 b = proceed_to_checkout(browser,waits,Action,b_info)
+                print('ptc')
                 if b == False:
                             end = time.time()
                             s1 = False
@@ -1101,6 +1108,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
 
                 #confirm details func
                 b = confirm_acknowledgements(waits)
+                print('ca')
                 if b == False:
                             end = time.time()
                             s1 = False
@@ -1111,6 +1119,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
 
                 #confirm camp details func
                 b = confirm_details(waits)
+                print('cd')
                 if b == False:
                             end = time.time()
                             s1 = False
@@ -1121,6 +1130,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
 
                 #confirm occupants func
                 b = confirm_occupant(browser,waits,Action,u_info,b_info)
+                print('co')
                 if b == False:
                             end = time.time()
                             s1 = False
@@ -1131,6 +1141,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
 
                 #confirm party info func
                 b = confirm_party_info(browser,waits,Action)
+                print('cpi')
                 if b == False:
                             end = time.time()
                             s1 = False
@@ -1141,6 +1152,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
 
                 #confirm add ons func
                 b = confirm_addons(browser,waits,Action)
+                print('ca')
                 if b == False:
                             end = time.time()
                             s1 = False
@@ -1152,6 +1164,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                 #make payment func
                 #confirm_purchase(browser,waits,Action) for tim
                 b = confirm_purchase(browser,waits,Action)
+                print('cp')
                 if b == False:
                             end = time.time()
                             s1 = False
