@@ -593,7 +593,7 @@ def schedule_site(*args):
         #GOOGLE_CHROME_BIN = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--headless')
+        #chrome_options.add_argument('--headless')
         #chrome_options.add_argument('--proxy-sever=socks5://127.0.0.1:0000')
         chrome_options.add_argument('--no-zygote')
         chrome_options.add_argument("--disable-dev-shm-usage")
