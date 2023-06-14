@@ -710,13 +710,13 @@ def testBook():
                 #start_date=start_day,end_date=end_day start_day = f'{date_booked} 06:53:00'
                 #end_day = f'{date_booked} 19:59:00'
                 data= User.get_id(current_user)
-                
+                '''
                 newB = BookingData(park ='Golden Ears',site='A5',site_type='Campsite',campground = 'Alouette North',inner_campground=None,arrival_date=datetime(2023,6,21).date()
                 ,nights = '1',equiptment = '2 Tents',email = 'cfarbatuk@gmail.com',password = 'Machine8190$',
                 party_size='2',contact_num=f'6046141826',booked = False,user_id=data)
                 db.session.add(newB)
                 db.session.commit()  
-                
+                '''
                 #doubleSites
                 
                 
@@ -734,7 +734,7 @@ def testBook():
                     start_day = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day} 06:55:00'
                     end_day = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day} 20:59:59'
                     #start_date=start_day,end_date=end_day,
-                    scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[data,i], id=f'{account.id}-{i.park}-{i.campground}-{i.site}-{i.arrival_date}',minutes =.2,max_instances =1)
+                    scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[data,i], id=f'{account.id}-{i.park}-{i.campground}-{i.site}-{i.arrival_date}',minutes =.3,max_instances =1)
                     account.add_scan(True)
                     i.logged = True
                     db.session.merge(i)
