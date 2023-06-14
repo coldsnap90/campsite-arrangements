@@ -7,8 +7,8 @@ import os
 
 
 class Config:
-    env = 'pro'
-    #env = 'devpro'
+    #env = 'pro'
+    env = 'devpro'
     ADMIN_PASS = os.environ.get('ENV_ADMIN_PASS')
     STRIPE_LIVE_SECRET_KEY = os.environ.get('ENV_STRIPE_SECRET_KEY')
     STRIPE_LIVE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_PUBLIC_KEY')
@@ -35,6 +35,7 @@ class Config:
         SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='postgresql://tymepwkuzahvve:0686a22d893f8b58c085d79f37af138c242ec3e4e00373d513530f8d17fe3f96@ec2-54-173-77-184.compute-1.amazonaws.com:5432/d473d2peg0efp6')}
   
     SECRET_KEY = os.environ.get('ENV_SECRET_KEY')
+    STRIPE_LIVE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_PUBLIC_KEY')
     #SECURITY_PASSWORD_SALT = 'SUPER SALTY STRING !@#$%^&*()'
     #SECURITY_PASSWORD_HASH= 'bcrypt'
     MAIL_SERVER = 'smtp.gmail.com'

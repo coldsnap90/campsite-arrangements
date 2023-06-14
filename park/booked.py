@@ -137,42 +137,29 @@ def confirm_reservation(browser,waits,Action):
             try:
                 waits.until(lambda browser: browser.execute_script('return document.readyState') == 'complete')
                 flag1 = False
+                print('break')
                 break
             except:
                 browser.refresh()
     flag = False
-    if flag1 == False:
+    while flag == False:
             try:
+                print('try box')
                 box1  = 'All reservation details are correct.'
                 box2 = 'I have read and acknowledge all of the messages listed.'
                 box1_bool = False
                 box2_bool = False
                 counter = 0
                 while flag == False:
+                    print('flag loop ',counter)
                     counter+=1
                     if box1_bool == False:
                         try:
                             b1 = waits.until(EC.presence_of_element_located((By.XPATH,"//span[contains(text(),'%s')]" % box1))).click() 
-                        except:
-                            pass
-                   
-                    if box2_bool == False:
-                        try:
-                            b2 = waits.until(EC.presence_of_element_located((By.XPATH,"//span[contains(text(),'%s')]" % box2))).click()
-                        except:
-                            pass
-                    try:
-                        n = browser.find_elements(By.XPATH,"//input[contains(@id,'mat-checkbox-')]")
-                        if n[0].get_attribute("aria-checked") == 'true':
-                            box1_bool = True
-                        if n[1].get_attribute("aria-checked") == 'true':
-                            box2_bool = True
-                        if box1_bool == True and box2_bool == True:
                             flag = True
-                            break
-                        else:
-                            print('1 or both false')
-                    except:
+                        except:
+                            pass
+               
                         if counter > 5:
                             browser.refresh()
                         if counter > 10:
@@ -568,19 +555,24 @@ def double_site(browser,waits,Action,u_info,b_info,s_info):
     counter = 0
     while flag == False:
         try:
+            print('try')
             counter+=1
+            print('counter : ',counter)
             if box1_bool == False:
                 try:
+                    print('try b1')
                     b1 = waits.until(EC.presence_of_element_located((By.XPATH,"//span[contains(text(),'%s')]" % box1))).click()
                 except:
                     print('b1 fail') 
 
             if box2_bool == False:
                 try:
+                    print('try b2')
                     b2 = waits.until(EC.presence_of_element_located((By.XPATH,"//span[contains(text(),'%s')]" % box2))).click()
                 except:
                      print('b2 fail')
             try:
+                        print('looking for')
                         n = browser.find_elements(By.XPATH,"//input[contains(@id,'mat-checkbox-')]")
                         for i in n:
                            
@@ -596,6 +588,7 @@ def double_site(browser,waits,Action,u_info,b_info,s_info):
                             flag = True
                             break
             except:
+                        print('except counter')
                         if counter > 5:
                             browser.refresh()
                         if counter > 10:
@@ -1006,10 +999,8 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
         waits.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR,'.mat-accordion')))
         site_found = False
         found_counter = 0
-      
-        advisory_flag = True
-        while advisory_flag:
-            while site_found == False:
+        while site_found == False:
+                print('llop ')
                 try:
                     found_counter+=1
                     sites = browser.find_elements(By.XPATH,"//h3[contains(@id,'resource-name-')]")
@@ -1035,12 +1026,13 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                             
                                 
                             
-            
+                except:                        
                     waits.until(EC.presence_of_element_located((By.ID,"loadMoreButton"))).click()
                     sleep(1)
-                    sites = browser.find_elements(By.XPATH,"//h3[contains(@id,'resource-name-')]")
-                except:
-                    pass
+          
+                    
+                
+           
                 if found_counter > 5:
                         browser.close()
                         end = time.time()
@@ -1048,41 +1040,34 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
                         x = 'site search'
                         return False,end,s1,x
                 #sitefound
-            if site_found == False:
-                end = time.time()
-                s1 = False
-                x = 'site search'
-                return False,end,s1,x
+           
             
-            bool_flag = True 
-            count = 0
-            while bool_flag == True:
-        
+        bool_flag = True 
+        count = 0
+        print('bf')
+        while bool_flag == True:
+                                    ('inner bf')
                                     if datetime.now().time():
+                                        print('DT')
                                         try:
                                             r = 'Reserve'
                                             waits.until(EC.presence_of_element_located((By.XPATH,"//span[contains(text(),'%s')]" % r))).click()
-                                            waits.until(EC.presence_of_element_located((By.ID,"confirmButton"))).click()
-                                            if waits.until(EC.presence_of_element_located((By.XPATH,"//span[contains(text(),'%s')]" % r))) == False:
-                                                bool_flag = False
-                                                break
-                                            else:
-                                                c = 'Close'
-                                                browser.find_element(By.XPATH,'//span[contains(text(),"%s")]'% c).click()
-                                                count+=1
+                                       
+                                            print('reserved')
+                                            bool_flag = False
+                                            
                                         except:
-                                             pass
+                                             count+=1
                                     if count == 5:
                                             end = time.time()
                                             s1 = False
                                             x='greater then 4 months booking time'
                                             return False,end,s1,x                                             
                                              
-            print('site found')
+        print('site found')
+        print("HEYYYYYYYYYYYYy")
                 #check for double
-            flag = advisory(browser,waits)
-            if flag == False:
-                 advisory_flag = False
+        flag = advisory(browser,waits)
         if flag == False:
                 print('flag == false')
                 b =confirm_reservation(browser,waits,Action)
