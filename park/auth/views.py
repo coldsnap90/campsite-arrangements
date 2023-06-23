@@ -720,7 +720,7 @@ def testBook():
                 #doubleSites
                 
                 
-                newB = BookingData(park ='Golden Ears',site='A6',site_type='Campsite',campground = 'Alouette North',inner_campground=None,arrival_date=datetime(2023,6,21).date()
+                newB = BookingData(park ='Golden Ears',site='A8',site_type='Campsite',campground = 'Alouette North',inner_campground=None,arrival_date=datetime(2023,6,27).date()
                 ,nights = '1',equiptment = '2 Tents',email = 'cfarbatuk@gmail.com',password = 'Machine8190$',
                 party_size='2',contact_num=f'6046141826',booked = False,user_id=data)
                 db.session.add(newB)

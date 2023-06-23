@@ -146,19 +146,13 @@ def confirm_reservation(browser,waits,Action):
             try:
                 print('try box')
                 box1  = 'All reservation details are correct.'
-                box2 = 'I have read and acknowledge all of the messages listed.'
                 box1_bool = False
-                box2_bool = False
                 counter = 0
                 while flag == False:
-                    print('flag loop ',counter)
-                    counter+=1
-                    if box1_bool == False:
-                        try:
-                            b1 = waits.until(EC.presence_of_element_located((By.XPATH,"//span[contains(text(),'%s')]" % box1))).click() 
-                            flag = True
-                        except:
-                            pass
+                        counter+=1
+                        b1 = waits.until(EC.presence_of_element_located((By.XPATH,"//span[contains(text(),'%s')]" % box1))).click() 
+                        flag = True
+
                
                         if counter > 5:
                             browser.refresh()
