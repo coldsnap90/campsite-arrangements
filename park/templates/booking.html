@@ -223,7 +223,7 @@
   
         //const url = 'http://127.0.0.1:5000/auth/sited/';
         
-        /const url = 'https://webookcamp.herokuapp.com//auth/sited/';
+        const url = 'https://webookcamp.herokuapp.com//auth/sited/';
         
 
         fetch(url + park).then(function(response) {
@@ -235,6 +235,7 @@
                 var optionHTML3 ='';
                 optionHTML += '<option value= ""> </option>';
                 for (var sites of data.sites) 
+                {
                     optionHTML += '<option value=" '+sites.names +'">' + sites.names + '</option>';
                     if (sites.inner_campground != null)
                     {
