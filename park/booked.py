@@ -24,13 +24,13 @@ import os
 import selectors
 import time
 import threading
-from memory_profiler import memory_usage,profile
-fp = open('./memory_profile_app.log','w+')
+#from memory_profiler import memory_usage,profile
+#fp = open('./memory_profile_app.log','w+')
 
 #bot program
 
 #delete reservation when an error occurs to far into the process
-@profile(stream=fp)
+##@profile(stream=fp)
 def delete_reservation(browser,waits,Action):
     '''deletes reservation'''
     flag = True
@@ -63,7 +63,7 @@ def delete_reservation(browser,waits,Action):
         else:
             flag = advisory(browser,waits)
 '''
-@profile(stream=fp)
+##@profile(stream=fp)
 def occupant(browser,waits,Action,b_info):
     '''navigates occupant page and enters in extra occupant info'''
     occupant_Fname = waits.until(EC.presence_of_element_located((By.XPATH,"//input[contains(@id,'first-name-field-')]")))
@@ -107,7 +107,7 @@ def occupant(browser,waits,Action,b_info):
     except:
          return False
     
-@profile(stream=fp)
+##@profile(stream=fp)
 def proceed_to_checkout(browser,waits,Action,b_info):
     '''navigates checkpout page and logs into account'''
     n = 5
@@ -129,7 +129,7 @@ def proceed_to_checkout(browser,waits,Action,b_info):
         print('logged in')
         return True
    
-@profile(stream=fp)
+#@profile(stream=fp)
 def confirm_reservation(browser,waits,Action):
     '''navigates initial reservation page'''
     flag1 = True
@@ -175,7 +175,7 @@ def confirm_reservation(browser,waits,Action):
                 return True
             except:
                 return False
-@profile(stream=fp)
+#@profile(stream=fp)
 def confirm_acknowledgements(waits):
     '''navigfates acknowledgements page'''
     try:
@@ -205,7 +205,7 @@ def confirm_acknowledgements(waits):
 
     if counter == 10:
          return False
-@profile(stream=fp)
+#@profile(stream=fp)
 def confirm_details(waits):
     '''navigates the details page'''
     try:
@@ -213,7 +213,7 @@ def confirm_details(waits):
         return True
     except:
         return False
-@profile(stream=fp)
+#@profile(stream=fp)
 def confirm_occupant(browser,waits,Action,u_info,b_info):
     '''navigates the occupants page'''
     if b_info.occupant == True:
@@ -270,7 +270,7 @@ def confirm_occupant(browser,waits,Action,u_info,b_info):
                             return True
                 except:
                    return False
-@profile(stream=fp)
+#@profile(stream=fp)
 def confirm_party_info(browser,waits,Action):
     '''navigates the party info page'''
     counter = 0
@@ -298,7 +298,7 @@ def confirm_party_info(browser,waits,Action):
 
     except:
         return False
-@profile(stream=fp)
+#@profile(stream=fp)
 def confirm_addons(browser,waits,Action):
     '''navigates the confirm addons page'''
     flag = True
@@ -342,7 +342,7 @@ def confirm_addons(browser,waits,Action):
             
     if counter == 10:
          return False
-@profile(stream=fp)
+#@profile(stream=fp)
 def confirm_purchases(browser,waits,Action,s_info):
     '''using the stripe api it makes a request for credit card details and pays for the campsite'''
     card = waits.until(EC.presence_of_element_located((By.ID,'cardNumber')))
@@ -371,7 +371,7 @@ def confirm_purchases(browser,waits,Action,s_info):
                         return False
                 except:
                     print('Not found')
-@profile(stream=fp)
+#@profile(stream=fp)
 def confirm_purchase(browser,waits,Action):
 
     card = waits.until(EC.presence_of_element_located((By.ID,'cardNumber')))
@@ -400,7 +400,7 @@ def confirm_purchase(browser,waits,Action):
                         return False
                 except:
                     print('Not found')
-@profile(stream=fp)   
+#@profile(stream=fp)   
 def advisory(browser,waits):
     '''checks to see if the site is a double site or not'''
     
@@ -419,7 +419,7 @@ def advisory(browser,waits):
     
     finally:
          return False
-@profile(stream=fp)
+#@profile(stream=fp)
 def removed(browser,waits):
     try:
          browser.find_element(By.ID,'message')
@@ -432,7 +432,7 @@ def removed(browser,waits):
          return True
     except:
          return False
-@profile(stream=fp)
+#@profile(stream=fp)
 def no_sites(browser,waits):
     '''checks to see if site is missing'''
     flag = False
@@ -447,17 +447,17 @@ def no_sites(browser,waits):
     except:
         pass
     return flag
-@profile(stream=fp)
+#@profile(stream=fp)
 def escape(Action):
     '''escapes some click function'''
     Action.key_down(Keys.ESCAPE).perform()
     Action.key_up(Keys.ESCAPE).perform()
-@profile(stream=fp)
+#@profile(stream=fp)
 def backspace(Action):
     '''deletes some inpits'''
     Action.key_down(Keys.BACKSPACE).perform()
     Action.key_up(Keys.BACKSPACE).perform()
-@profile(stream=fp)
+#@profile(stream=fp)
 def pick_month(browser,waits,Action,month):
     '''checks for month of request booking and clicks it'''
     print('month ',month)
@@ -483,7 +483,7 @@ def pick_month(browser,waits,Action,month):
             pass
     return True
 
-@profile(stream=fp)
+#@profile(stream=fp)
 def pick_day(browser,waits,Action,day):
     '''checks for day of request bookinf and clicks it'''
     flag = True
@@ -508,7 +508,7 @@ def pick_day(browser,waits,Action,day):
     return True
 
 #logins in to bc parks account
-@profile(stream=fp)
+#@profile(stream=fp)
 def login(browser,waits,b_info):
     print('login')
     found = waits.until(EC.presence_of_element_located((By.ID,'email')))
@@ -530,7 +530,7 @@ def login(browser,waits,b_info):
     return True  
  
 #if booking is a double site,this func executes
-@profile(stream=fp)
+#@profile(stream=fp)
 def double_site(browser,waits,Action,u_info,b_info,s_info):
     flag1 = True
     while flag1 == True:
@@ -747,9 +747,9 @@ def double_site(browser,waits,Action,u_info,b_info,s_info):
 
 #main function for booking, called from the job function
 
-@profile(stream=fp)
+#@profile(stream=fp)
 def reservation(browser,waits,Action,u_info,b_info,s_info):
-        @profile(stream=fp)
+   #     @profile(stream=fp)
         def mytimer():
             print('timer start')
             sleep(600)
