@@ -770,6 +770,7 @@ def reservation(browser,waits,Action,u_info,b_info,s_info):
         browser.implicitly_wait(5)
         doc_ready =wait(browser, 20).until(lambda browser: browser.execute_script('return document.readyState') == 'complete')
         browser.get('https://camping.bcparks.ca/')
+        
 
         print('\n\n')
         flag = True

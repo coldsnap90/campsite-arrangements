@@ -593,6 +593,8 @@ def schedule_site(*args):
         #GOOGLE_CHROME_BIN = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument("--start-maximized")
+        chrome_options.add_argument('window-size=2560,1440')
         #chrome_options.add_argument('--headless')
         #chrome_options.add_argument('--proxy-sever=socks5://127.0.0.1:0000')
         chrome_options.add_argument('--no-zygote')
@@ -605,6 +607,7 @@ def schedule_site(*args):
         try:
             print('Browser starting')
             browser = webdriver.Chrome(chrome_options=chrome_options)
+        
         except:
             print("\nChrome crashed on launch:")
             print("Trying again in 1 second")
