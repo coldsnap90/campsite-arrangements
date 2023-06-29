@@ -56,9 +56,9 @@ class ChoiceForm(FlaskForm):
       
 class cancelBookingForm(FlaskForm):
        
-       park = StringField('ENTER Park.',validators = [Alpha(),DataRequired()],render_kw={'style': 'width: 28ch'})
-       camp = StringField('ENTER Camp.',validators = [Alpha(),DataRequired()],render_kw={'style': 'width: 28ch'})
-       site = StringField('ENTER Site.',validators = [Alpha(),DataRequired()],render_kw={'style': 'width: 28ch'})
+       park = StringField('ENTER PARK.',validators = [Alpha(),DataRequired()],render_kw={'style': 'width: 28ch'})
+       camp = StringField('ENTER CAMP.',validators = [Alpha(),DataRequired()],render_kw={'style': 'width: 28ch'})
+       site = StringField('ENTER SITE.',validators = [Alpha(),DataRequired()],render_kw={'style': 'width: 28ch'})
        submit = SubmitField('Submit')
 class fakeForm(FlaskForm):
         occupant = SelectField('Enter occpant #. ',choices=['','True','False'],validators=[],render_kw={'style': 'width: 28ch'})

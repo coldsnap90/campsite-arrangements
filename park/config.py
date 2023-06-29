@@ -1,4 +1,5 @@
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from dotenv import load_dotenv
 load_dotenv()
 import os
@@ -7,8 +8,8 @@ import os
 
 
 class Config:
-    env = 'pro'
-    #env = 'devpro'
+    #env = 'pro'
+    env = 'devpro'
     ADMIN_PASS = os.environ.get('ENV_ADMIN_PASS')
     STRIPE_LIVE_SECRET_KEY = os.environ.get('ENV_STRIPE_SECRET_KEY')
     STRIPE_LIVE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_PUBLIC_KEY')
@@ -17,22 +18,19 @@ class Config:
     SCHEDULER_API_ENABLED = True  
   
     if env == 'pro':
-        STRIPE_LIVE_SECRET_KEY = os.environ.get('ENV_STRIPE_SECRET_KEY')
-        STRIPE_LIVE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_PUBLIC_KEY')
-        #STRIPE_LIVE_SECRET_KEY = os.environ.get('ENV_STRIPE_LIVE_SECRET_KEY')
-        #STRIPE_LIVE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_LIVE_PUBLIC_KEY')
+        STRIPE_LIVE_SECRET_KEY = os.environ.get('ENV_STRIPE_LIVE_SECRET_KEY')
+        STRIPE_LIVE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_LIVE_PUBLIC_KEY')
         SERVER_NAME = "webookcamp.herokuapp.com"
         SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='postgresql://tymepwkuzahvve:0686a22d893f8b58c085d79f37af138c242ec3e4e00373d513530f8d17fe3f96@ec2-54-173-77-184.compute-1.amazonaws.com:5432/d473d2peg0efp6')}
-    #"sqlite:///db.job"
+        SCHEDULER_EXECUTORS = {'default': ThreadPoolExecutor(3),'processpool': ProcessPoolExecutor(3)}
     elif env == 'dev':
-        SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='sqlite:///db.database')}
-        SERVER_NAME = "127.0.0.1:5000"
-
-        STRIPE_LIVE_SECRET_KEY = os.environ.get('ENV_STRIPE_SECRET_KEY')
-        STRIPE_LIVE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_PUBLIC_KEY')
-    elif env == 'devpro':
         SERVER_NAME = "127.0.0.1:5000"
         SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='postgresql://tymepwkuzahvve:0686a22d893f8b58c085d79f37af138c242ec3e4e00373d513530f8d17fe3f96@ec2-54-173-77-184.compute-1.amazonaws.com:5432/d473d2peg0efp6')}
+    elif env == 'devpro':
+        SERVER_NAME = "webookcamp.herokuapp.com"
+        SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url='postgresql://tymepwkuzahvve:0686a22d893f8b58c085d79f37af138c242ec3e4e00373d513530f8d17fe3f96@ec2-54-173-77-184.compute-1.amazonaws.com:5432/d473d2peg0efp6')}
+        SCHEDULER_EXECUTORS = {'default': ThreadPoolExecutor(3),'processpool': ProcessPoolExecutor(3)}
+        
   
     SECRET_KEY = os.environ.get('ENV_SECRET_KEY')
     STRIPE_LIVE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_PUBLIC_KEY')

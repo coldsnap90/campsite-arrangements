@@ -98,7 +98,6 @@ def sign_up():
 @auth.route('/book',methods=['GET','POST'])
 @login_required
 def book():
-    
     form = ChoiceForm()
     date_error = None
     form.sites.choices = [site.sites for site in Park.query.filter_by(park_site = form.park.data).all()]
@@ -107,9 +106,9 @@ def book():
         user_account = User.query.filter_by(id = user_id).first()
       
         plans = {'iann_mem_bronze':3,'jann_mem_silver':5,
-        'kann_mem_gold':7,15:'price_1LulFpH3k8WZ4arfR98vyl3X','emon_mem_bronze':3,
-        'fmon_mem_silver':5,'gmon_mem_gold':7,'hmon_mem_plat':15,'asingle_bronze':1,
-        'bsingle_silver':1,'csingle_gold':1,'dsingle_plat':2}
+                 'kann_mem_gold':7,15:'price_1LulFpH3k8WZ4arfR98vyl3X','emon_mem_bronze':3,
+                 'fmon_mem_silver':5,'gmon_mem_gold':7,'hmon_mem_plat':15,'asingle_bronze':1,
+                 'bsingle_silver':1,'csingle_gold':1,'dsingle_plat':2}
         if user_account.subscription == None and plans[user_account.subscription]  < user_account.scan:
             return render_template('cancel.html',scan=True)
 
@@ -175,9 +174,9 @@ def sited(park):
 @auth.route('/accountDetails',methods=['GET'])
 @login_required
 def account_details():
-    user_id = User.get_id(current_user)
-    user_account = User.query.filter_by(id = user_id).first()
-    booking = BookingData.query.filter_by(id=user_id).all()
+    u_id = User.get_id(current_user)
+    user_account = User.query.filter_by(id = u_id).first()
+    booking = BookingData.query.filter_by(user_id=u_id).all()
     return render_template('accountDetails.html',data = user_account,booking = booking)
 
 #cancel subscription route
@@ -252,9 +251,14 @@ def edit_account_details():
 def cancel_booking():
     form = cancelBookingForm()
     user_id = User.get_id(current_user)
-    bookings = BookingData.filter_by(id = user_id).filter_by(BookingData.booked == False).all()
+    bookings = BookingData.query.filter_by(id = user_id).filter(BookingData.booked == False).all()
     if form.is_submitted():
-        scheduler.remove_job(id=f'{user_id}-{form.data}-{form.camp.data}-{form.site.data}')
+        print('submitted')
+        try:
+            scheduler.remove_job(id=f'{user_id}-{form.park.data}-{form.camp.data}-{form.site.data}')
+        except:
+            print('no job')
+
     return render_template('cancel_booking.html',form=form,bookings=bookings,data=user_id)
 
 #send email helpert function
@@ -336,23 +340,18 @@ def payment():
     #will be conditioon here based on subscription purchased or not
 
     if confirmed_account:
-
-
         realproductKey = {'iann_mem_bronze':'price_1LmSeeH3k8WZ4arfFSxheyTG','jann_mem_silver':'price_1LmSefH3k8WZ4arfZUxMjyKe',
-    'kann_mem_gold':'price_1LmSefH3k8WZ4arf8YLs693X','lann_mem_plat':'price_1LmSefH3k8WZ4arfidVgDZiG','emon_mem_bronze':'price_1MGwSjH3k8WZ4arftdFl1zKT',
-    'fmon_mem_silver':'price_1MGwSjH3k8WZ4arff5xCQvYI','gmon_mem_gold':'price_1MGwSjH3k8WZ4arf3oUu6qgB','hmon_mem_plat':'price_1MGwSjH3k8WZ4arfSoVH91jP','asingle_bronze':'price_1MGwVSH3k8WZ4arfypWmp1tR',
-    'bsingle_silver':'price_1MGwVSH3k8WZ4arfLkXcMkzY','csingle_gold':'price_1MGwVSH3k8WZ4arfQ8OzBIfb','dsingle_plat':'price_1MGwVSH3k8WZ4arfXwO7cLbt'}
-        
+                          'kann_mem_gold':'price_1LmSefH3k8WZ4arf8YLs693X','lann_mem_plat':'price_1LmSefH3k8WZ4arfidVgDZiG','emon_mem_bronze':'price_1MGwSjH3k8WZ4arftdFl1zKT',
+                          'fmon_mem_silver':'price_1MGwSjH3k8WZ4arff5xCQvYI','gmon_mem_gold':'price_1MGwSjH3k8WZ4arf3oUu6qgB','hmon_mem_plat':'price_1MGwSjH3k8WZ4arfSoVH91jP','asingle_bronze':'price_1MGwVSH3k8WZ4arfypWmp1tR',
+                          'bsingle_silver':'price_1MGwVSH3k8WZ4arfLkXcMkzY','csingle_gold':'price_1MGwVSH3k8WZ4arfQ8OzBIfb','dsingle_plat':'price_1MGwVSH3k8WZ4arfXwO7cLbt'}
         new_subscription = None
         id = None
 
         if product.is_submitted():
             new_subscription = product.data
-            for i in product.data.keys():
-                if product.data[i] == True:
-                    new_subscription = i
-            else:
-                print(new_subscription)
+            for key in product.data.keys():
+                if product.data[key] == True:
+                    new_subscription = key
                 
             if new_subscription in realproductKey:
                 p_id = realproductKey[new_subscription]
@@ -374,7 +373,6 @@ def payment():
                 )
                     return redirect(checkout_session['url'])
                 else:
-                    print('New Sub 2 ',new_subscription)
                     checkout_session = stripe.checkout.Session.create(line_items =[
                         {'price':p_id,'quantity':1}
                         
@@ -472,7 +470,6 @@ def webhook():
    
         user_id = session.metadata['user_id']
 
-
         custy = User.query.filter_by(id=user_id).first()
         id_update = custy.id_check(customer)
         sub_update = custy.subscription_check(valued)
@@ -487,10 +484,10 @@ def webhook():
 
 def job_date(date_booking):
         if date_booking.month > ((datetime.now().month + 4)%12) and date_booking.year == datetime.now().year:
-            print('1')
             date_booked = f'{date_booking.year}-{date_booking.month-4}-{date_booking.day+1}'
             start_day = f'{date_booked} 06:53:00'
             end_day = f'{date_booked} 19:59:00'
+
         elif date_booking.month <= ((datetime.now().month + 4)%12) and date_booking.year == datetime.now().year:
             if date_booking.day <= datetime.now().day:
                 date_booked = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day}'
@@ -500,11 +497,14 @@ def job_date(date_booking):
                 date_booked = f'{date_booking.year}-{date_booking.month-4}-{date_booking.day}'
                 start_day = f'{date_booked} 06:53:00'
                 end_day = f'{date_booked} 19:59:00'
+
         elif date_booking.year > datetime.now().year:
             date_booked = f'{date_booking.year}-{date_booking.month-4}-{date_booking.day}'
             start_day = f'{date_booked} 06:53:00'
             end_day = f'{date_booked} 19:59:00'
+
         return start_day,end_day
+
 #apscheduler route that activates a job function
 @auth.route('/addTask',methods =['GET','POST'])
 @login_required
@@ -528,7 +528,6 @@ def add_task():
     acc_scan_num = account.scan
     scan_num = acc_scan_num + 1
     temp = None
-    print(sub)
     if sub in productKey:
         time = productKey[sub]
         scan_num = productScan[sub]
@@ -541,15 +540,12 @@ def add_task():
             start_day, end_day = job_date(i.arrival_date)
             scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',args=[user_id,i], id=f'{account.id}-{i.park}-{i.campground}-{i.site}-{i.arrival_date}',start_date=start_day,end_date=end_day,minutes =1,max_instances =1)
             i.logged = True
-            print('added')
             db.session.merge(i)
             db.session.commit()
     else:
         print('return False')
         return render_template('cancel.html',scan = False)
     return {}
-
-
 
 #cancel subscription route
 def cancel_sub(*args):
@@ -570,7 +566,6 @@ def job_check():
         #app.apscheduler.add_job(func=blah, trigger='date', args=[i], id='j'+str(i)
     return render_template('data.html',data = scheduler.get_jobs)
 
-
 #ignore functions below like the main routes these were used in pseudo-testing and will be deleted later 
 @auth.route('/rar',methods =['GET','POST'])
 def rar():
@@ -578,17 +573,14 @@ def rar():
     logging.basicConfig(stream=sys.stdout) 
     logging.getLogger('apscheduler').setLevel(logging.DEBUG)
     return 'removed'
+
 def schedule_site(*args):
-    print('starting Job')
     account_id = args[0]
     b_info = args[1]
-
-    print('b_info : ',b_info)
     with scheduler.app.app_context():
         u_info = User.query.filter_by(id=account_id).first()
         s_info = stripe.Customer.retrieve(f'{u_info.cId}')
            
-  
         #CHROMEDRIVER_PATH = os.environ.get('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
         #GOOGLE_CHROME_BIN = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
         chrome_options = webdriver.ChromeOptions()
@@ -605,29 +597,22 @@ def schedule_site(*args):
 
        # exception for if chromedriver crashes on launch
         try:
-            print('Browser starting')
             browser = webdriver.Chrome(chrome_options=chrome_options)
         
         except:
-            print("\nChrome crashed on launch:")
-            print("Trying again in 1 second")
             time.sleep(1)
             browswer = webdriver.Chrome(chrome_options=chrome_options)
-            print("Success!\n")
+
 
         waits = wait(browser,20)
         Action = ActionChains(browser)
         time1 = time.time()
-        print('reservation starting')
-
         book,time2,success,failed_at = reservation(browser,waits,Action,u_info,b_info,s_info)
         btt = bookingTimeTest(None,datetime.now(),success,failed_at,None,0)
         db.session.add(btt)
         db.session.commit()
-        print('Failed at : ',failed_at)
        
         if book == True:
-            print('Book == True')
             site = f'{b_info.park}-{b_info.site}'
             btt.successful_booking(time1,time2,success,site)
             db.session.merge(btt)
@@ -640,10 +625,9 @@ def schedule_site(*args):
             for job in scheduler.get_jobs():
                             print("name: %s, trigger: %s, next run: %s, handler: %s" % (
                     job.name, job.trigger, job.next_run_time, job.func))
-            print('skipped')
+
                         
         else:
-            print('Booking Failed')
             site = f'{b_info.park}-{b_info.site}'
             btt.failed_booking(time1,time2,failed_at,site,1)
             db.session.merge(btt)
@@ -668,9 +652,6 @@ def booking_info(token):
         bookingBool = False
         return render_template('accountDetails.html',bookingBool=bookingBool,data=user,booking = user_bookings)
           
-
-
-
 
 #TESTING & ADMIN ROUTES Ignore
 #create admin
@@ -719,7 +700,7 @@ def testBook():
                 party_size='2',contact_num=f'6046141826',booked = False,user_id=data)
                 db.session.add(newB)
                 db.session.commit()  
-                '''
+                
                 #doubleSites
                 
                 newB = BookingData(park ='Golden Ears',site='A8',site_type='Campsite',campground = 'Alouette North',inner_campground=None,arrival_date=datetime(2023,6,27).date()
@@ -727,7 +708,7 @@ def testBook():
                 party_size='2',contact_num=f'6046141826',booked = False,user_id=data)
                 db.session.add(newB)
                 db.session.commit()
-
+                
                 newB = BookingData(park ='Golden Ears',site='A69',site_type='Campsite',campground = 'Alouette North',inner_campground=None,arrival_date=datetime(2023,6,27).date()
                 ,nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
                 party_size='2',contact_num=f'6046141826',booked = False,user_id=data)
@@ -739,6 +720,7 @@ def testBook():
                 party_size='2',contact_num=f'6046141826',booked = False,user_id=data)
                 db.session.add(newB)
                 db.session.commit()
+                '''
                 data = User.get_id(current_user)
                 account = User.query.filter_by(id = data).first()
                 #'start_date='2023-01-16 17:45:00',end_date='2023-01-14 20:00:00''
@@ -765,8 +747,6 @@ def testBook():
                 db.session.add(newB)
                 db.session.commit()
                 '''
-                
-               
          
                 '''
                 newB = BookingData(park ='Porteau Cove',site='any site',site_type='Campsite',campground = 'A (Sites 1-37)',inner_campground=None,arrival_date=datetime(2023,3,23).date()
@@ -804,8 +784,11 @@ def testBook():
                 return {}
                 #return redirect(url_for('auth.add_task'))
                 
-
-
-
-
+@auth.route('/bookings',methods=['GET','POST'])
+def bookings():
+    data = User.get_id(current_user)
+    account = User.query.filter_by(id=data).all()
+    time = bookingTimeTest.query.all()
+    b = BookingData.query.filter_by(user_id =data).all()
+    return render_template('data.html',data = data,campground = account,inner_Campground = time,bookings=b)
 
