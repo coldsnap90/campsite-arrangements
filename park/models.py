@@ -192,8 +192,6 @@ class User(db.Model,UserMixin):
         self.sub_day = sub_day
         self.phone_num = phone_num
 
-
-        
     def __repr__(self):
         return f"User('{self.email}','{self.password}','{self.firstName}','{self.lastName}','{self.confirmed}','{self.billingAddress}','{self.postalCode}','{self.city}','{self.province}','{self.country}','{self.subscription}','{self.cId}','{self.sId}','{self.scan}','{ self.sub_day}','{self.phone_num}','{self.is_admin}')"
     
@@ -213,7 +211,6 @@ class User(db.Model,UserMixin):
         return boole
 
     def subscription_check(self,value):
-        print('/n/n SUB CHECK /n/n')
         productKey = {'iann_mem_bronze':'8000','jann_mem_silver':'16000',
                     'kann_mem_gold':'24000','lanne_mem_plat':'40000','emon_mem_bronze':'800',
                     'fmon_mem_silver':'1600','gmon_mem_gold':'2400','hmon_mem_plat':'4000','asingle_bronze':'600',
@@ -221,16 +218,12 @@ class User(db.Model,UserMixin):
         for i in productKey:
             if productKey[i] == value:
                 self.subscription = i
-                print(' s = ',self.subscription)
                 db.session.merge(self)
-                
-                print(self.subscription)
-
                 return True
         else:
             return False
+        
     def set_admin(self):
-        print('setting admin')
         self.is_admin = True
         db.session.merge(self)
         db.session.commit()
@@ -358,7 +351,6 @@ class MyView(BaseView):
 class MyHomeView(AdminIndexView):
     @expose('/')
     def index(self):
-        arg1 = 'Hello'
         return self.render('admin/myhome.html', arg1=arg1)
 
 admin.add_view(Control(User,db.session))

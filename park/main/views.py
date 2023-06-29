@@ -10,6 +10,8 @@ from park.main.forms import *
 from park.models import *
 from park.main import main
 from park.auth.forms import ChoiceForm
+import logging
+import sys
 
 
 @main.route('/',methods =['GET','POST'])
@@ -26,12 +28,35 @@ def tos():
 @main.route('/admin/',methods =['GET','POST'])
 def admin():
     if current_user.is_admin:
-        return render_template('admin_signup.html')
-    else:
         return render_template('/admin/index.html',title = 'Admin Login')
+
+    else:
+        return render_template('admin_signup.html')
+    
+@main.route('/admin/rar',methods =['GET','POST'])
+def admin_job_check():
+    if current_user.is_admin:
+        print(scheduler.get_jobs())
+        for job in scheduler.get_jobs():
+            print("name: %s, trigger: %s, next run: %s, handler: %s" % (
+          job.name, job.trigger, job.next_run_time, job.func))
+        return render_template('/data.html',data = scheduler.get_jobs)
+    else:
+        return render_template('admin_signup.html')
+    
+    
+@main.route('/admin/job-check',methods =['GET','POST'])
+def admin_job_remove():
+    if current_user.is_admin:
+         scheduler.remove_all_jobs()
+         logging.basicConfig(stream=sys.stdout) 
+         logging.getLogger('apscheduler').setLevel(logging.DEBUG)
+         return 'removed'
+        
+    else:
+        return render_template('admin_signup.html')
 @main.route('/checkuser',methods=['GET','POST'])
 def check_user():
-    
     Account = bookingTimeTest.query.all()
     db.session.delete(Account)
     db.session.commit()
