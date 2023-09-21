@@ -12,3 +12,4 @@ test_client.py
 /tests
 /mem-logs
 cors.json
+memory_profile_app.log

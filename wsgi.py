@@ -1,4 +1,4 @@
-from park import create_app,os
+from park import create_app
 
 
 app = create_app()

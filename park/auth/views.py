@@ -145,6 +145,7 @@ def book():
 @auth.route('/sited/<park>',methods=['GET'])
 def sited(park):
     campSites = Park.query.filter_by(park_site=park).first()
+    print(campSites)
     campArray = []
     camp_temp = ''
     inner_temp =''
