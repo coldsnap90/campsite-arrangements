@@ -351,7 +351,7 @@ class MyView(BaseView):
 class MyHomeView(AdminIndexView):
     @expose('/')
     def index(self):
-        return self.render('admin/myhome.html', arg1=arg1)
+        return self.render('admin/myhome.html')
 
 admin.add_view(Control(User,db.session))
 admin.add_view(ModelView(BookingData,db.session))
