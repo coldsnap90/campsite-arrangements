@@ -149,7 +149,7 @@
   
   #bookingHolder {
     background: url("../images/backcountry-camping.png") no-repeat center center fixed;
-    background-size: cover;
+    object-fit: cover;
     height:100%;
     border:10px solid var(--gold);
     margin:0;

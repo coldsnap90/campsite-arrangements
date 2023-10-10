@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField,SubmitField,validators,ValidationError
-from wtforms.validators import DataRequired, Length, Email,EqualTo
-from park.models import User
+from wtforms import SubmitField
+
 
 #tosform
 class TosForm(FlaskForm):

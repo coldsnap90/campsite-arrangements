@@ -1,23 +1,16 @@
 from enum import unique
 from anyio import CapacityLimiter
-from flask import redirect,url_for,abort,render_template
+from flask import redirect,url_for,abort
 from .extensions import login_manager,mail,db,admin,Message
 #from .extensions import ma
-from flask_login import UserMixin,login_user,current_user,login_required,logout_user
+from flask_login import UserMixin,current_user
 #from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import AdminIndexView,BaseView,expose
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from flask import current_app
 import jwt
-from datetime import datetime
-
 from datetime import datetime, timezone, timedelta
-
-roles_users = db.Table('roles_users',db.Column('user_id',db.Integer,db.ForeignKey('users.id')),db.Column('role_id',db.Integer,db.ForeignKey('role.id')))
-class Role(db.Model):
-    id = db.Column(db.Integer,primary_key=True)
-    name = db.Column(db.String(50),unique= True)
 
 class Park(db.Model):
     __tablename__ = 'parks'
@@ -30,9 +23,7 @@ class Park(db.Model):
     def __repr__(self):
         return f"park({self.park_site})"
     
-
 class Site(db.Model):
-
     __tablename__ = 'sites'
     id = db.Column(db.Integer,primary_key = True)
     campground = db.Column(db.String(50))
@@ -42,21 +33,19 @@ class Site(db.Model):
 
     def __repr__(self):
         return f"{self.names}, {self.campground},{self.inner_campground}"
+    
     def set_names(self,names):
         if names != None:
             self.names = names
             db.session.merge(self)
+
     def set_campground(self,campground):
-        
             self.inner_Campground = campground
             db.session.merge(self)
 
     def set_campground(self,inner_campground):
         if inner_campground == None:
             self.inner_campground = inner_campground
-
-
-    
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -87,56 +76,50 @@ class BookingData(db.Model):
     occupant_phone_num = db.Column(db.String(50))
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
 
-
-    def __repr__(self):
-        return f"User({self.park},{self.site},{self.site_type},{self.campground},{self.inner_campground},{self.arrival_date},{self.party_size},{self.nights},{self.equiptment},{self.email},{self.password},{self.contact_num},{self.logged},{self.booked},{self.occupant}\
-        ,{self.occupant_first_name},{self.occupant_last_name},{self.occupant_address},{self.occupant_postal_code},{self.occupant_phone_num}"
+    def __repr__(self):                                                                              #                                            
+        return f"User({self.park},{self.site},{self.site_type},{self.campground},\
+                      {self.inner_campground},{self.arrival_date},{self.party_size},\
+                      {self.nights},{self.equiptment},{self.email},{self.password},\
+                      {self.contact_num},{self.logged},{self.booked},{self.occupant}\
+                      ,{self.occupant_first_name},{self.occupant_last_name},{self.occupant_address},\
+                      {self.occupant_postal_code},{self.occupant_phone_num}"
         
     def set_site(self,site):
         self.site = site 
+
     def set_day(self,day):
         self.arrival_day = day
+
     def set_mon(self,month):
         self.arrival_month = month
+
     def set_num(self,contact_num):
         self.contact_num = contact_num
         db.session.merge(self)
 
     def send_link(self,user):
         token = self.generate_confirmation_token()
-        print('GEN TOKEN ', token)
-       
-
         msg = Message('Campsite booking Notifier',
                     recipients=[user.email])
         confirmation_link = url_for('auth.booking_info',token=token,_external=True)
         msg.body = f'''Your site has been booked, follow the link for details:
     {confirmation_link}
     If you did not make this request then simply ignore this email and no changes will be made.
-    PS MY SCHMEXY LIL CHEEMO's :) this was booked online through BWC industries <|(=8^p) .
      '''
-       
         mail.send(msg)
 
     def generate_confirmation_token(self,expiration=1000000):
-
-        print('\n\n')
         data = {'confirm': self.id,'exp': datetime.now(timezone.utc) + timedelta(seconds=expiration)}
         return jwt.encode(data, current_app.config['SECRET_KEY'], algorithm="HS256")
    
-    
     def token_confirm(self, token, leeway=10):
-        print(' \n\n Decoding TOKEN \n\n ')
         try:
             data = jwt.decode(token, current_app.config['SECRET_KEY'], leeway=leeway, algorithms=["HS256"])
         except:
-            print('decode false', print(data.get('confirm')))
             return False
         if data.get('confirm') != self.id:
             print(data.get('confirm'), ' == ',self.id)
-            print('False')
             return False
-        print('/n/n DATA : ',data, data.get('confirm'))
         return True
     
     @staticmethod
@@ -146,9 +129,6 @@ class BookingData(db.Model):
         except:
             return None
         return User.query.get(data['user_id'])
-    
-
-    
 class User(db.Model,UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer,primary_key = True)
@@ -170,11 +150,12 @@ class User(db.Model,UserMixin):
     active = db.Column(db.Boolean)
     phone_num = db.Column(db.String(11))
     is_admin = db.Column(db.Boolean,default=False)
-   
     bookingDatas = db.relationship('BookingData',backref='users')
-    roles = db.relationship('Role',secondary = 'roles_users',backref='users',lazy='dynamic')
    
-    def __init__(self,email,password,firstName,lastName,confirmed,billingAddress,postalCode,city,province,country,subscription,cId,sId,scan,sub_day,phone_num):
+    def __init__(self,email,password,firstName,lastName,
+                 confirmed,billingAddress,postalCode,city,
+                 province,country,subscription,cId,sId,
+                 scan,sub_day,phone_num):
         self.email = email
         self.password = password
         self.firstName = firstName
@@ -193,63 +174,52 @@ class User(db.Model,UserMixin):
         self.phone_num = phone_num
 
     def __repr__(self):
-        return f"User('{self.email}','{self.password}','{self.firstName}','{self.lastName}','{self.confirmed}','{self.billingAddress}','{self.postalCode}','{self.city}','{self.province}','{self.country}','{self.subscription}','{self.cId}','{self.sId}','{self.scan}','{ self.sub_day}','{self.phone_num}','{self.is_admin}')"
-    
-    
-    def is_admins(self):
-        print(self.is_admin)
-        return
-
-    def temp_sub(self,boole):
-        if boole == True:
-            self.subscription = 'iann_mem_bronze'
-            db.session.merge(self)
-        else:
-            self.subscription = None
-            db.session.merge(self)
-        db.session.commit()
-        return boole
+        return f"User('{self.email}','{self.password}','{self.firstName}'\
+                      ,'{self.lastName}','{self.confirmed}','{self.billingAddress}',\
+                      '{self.postalCode}','{self.city}','{self.province}',\
+                      '{self.country}','{self.subscription}','{self.cId}',\
+                      '{self.sId}','{self.scan}','{ self.sub_day}','{self.phone_num}',\
+                      '{self.is_admin}')"
 
     def subscription_check(self,value):
         productKey = {'iann_mem_bronze':'8000','jann_mem_silver':'16000',
                     'kann_mem_gold':'24000','lanne_mem_plat':'40000','emon_mem_bronze':'800',
                     'fmon_mem_silver':'1600','gmon_mem_gold':'2400','hmon_mem_plat':'4000','asingle_bronze':'600',
                     'bsingle_silver':'1200','csingle_gold':'1800','dsingle_plat':'2400'}
-        for i in productKey:
-            if productKey[i] == value:
-                self.subscription = i
+        for entry in productKey:
+            if productKey[entry] == value:
+                self.subscription = entry
                 db.session.merge(self)
                 return True
         else:
             return False
         
     def set_admin(self):
+        print(self.id,self.is_admin,self.firstName)
         self.is_admin = True
         db.session.merge(self)
         db.session.commit()
-        print(self.is_admin)
         return
+    
     def id_check(self,id):
         if self.cId == None:
             self.cId = id
             db.session.merge(self)
             return True
         else:
-            print('ID exists')
             return False
+        
     def id_change(self,id):
             self.cId = id
             db.session.merge(self)
             return True
       
-
     def sId_check(self,id):
         if self.sId == None:
             self.sId = id
             db.session.merge(self)
             return True
         else:
-            print('ID exists')
             return False
   
 
@@ -267,7 +237,6 @@ class User(db.Model,UserMixin):
         
     def password_reset_mail(user):
         token = user.generate_confirmation_token()
-        print('user : ',user.email)
         msg = Message('Account confirmation link',
                     recipients=[user.email])
         confirmation_link = url_for('auth.reset_token',token=token,_external=True)
@@ -296,14 +265,11 @@ class User(db.Model,UserMixin):
         except:
             return None
         id = data.get('confirm')
-        
         return User.query.get(id)
     
     def add_scan(self,add):
-        print('SCAN CHECK : ',self.scan,add)
         if self.scan == None:
-            self.scan = 1
-            
+            self.scan = 1  
         elif add == True:
             self.scan = (int(self.scan)+1)
         else:
@@ -345,9 +311,9 @@ class MyView(BaseView):
             return True
         else:
             return abort(404)
-   
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('auth.login'))
+    
 class MyHomeView(AdminIndexView):
     @expose('/')
     def index(self):
@@ -355,7 +321,6 @@ class MyHomeView(AdminIndexView):
 
 admin.add_view(Control(User,db.session))
 admin.add_view(ModelView(BookingData,db.session))
-
 
 class bookingTimeTest(db.Model):
     id = db.Column(db.Integer,primary_key= True)
@@ -365,9 +330,14 @@ class bookingTimeTest(db.Model):
     success = db.Column(db.Boolean,default=False)
     failed_at = db.Column(db.String(75))
     failed_number = db.Column(db.Integer)
+
     def __repr__(self):
-        return f"Time (' time delta '{self.time_delta}', - date delta : '{self.date_delta}', - Success : '{self.success}', - Fail : '{self.failed_at}', - Site : '{self.site}', - failed numbers : '{self.failed_number}'"
-    def __init__(self,time_delta,date_delta,success,failed_at,site,failed_number):
+        return f"Time (' time delta '{self.time_delta}', - date delta : '{self.date_delta}'\
+                       , - Success : '{self.success}', - Fail : '{self.failed_at}', - Site : '{self.site}'\
+                       , - failed numbers : '{self.failed_number}'"
+    
+    def __init__(self,time_delta,date_delta,
+                 success,failed_at,site,failed_number):
         self.date_delta = date_delta
         self.time_delta = time_delta
         self.success=success
@@ -375,16 +345,18 @@ class bookingTimeTest(db.Model):
         self.site = site
         self.failed_number = failed_number
 
-    def successful_booking(self,time_delta_X1,time_delta_X2,success,site):
+    def successful_booking(self,time_delta_X1,time_delta_X2,
+                           success,site):
         if self.time_delta == None:
             time_delta = time_delta_X2 - time_delta_X1
             self.time_delta = f'{time_delta} seconds'   
         if success == True:
             self.success = True
         self.site = site
-     
         return
-    def failed_booking(self,time_delta_X1,time_delta_X2,failed_at,site,failed_number):
+    
+    def failed_booking(self,time_delta_X1,time_delta_X2,
+                       failed_at,site,failed_number):
             time_delta = time_delta_X2 - time_delta_X1
             self.time_delta = f'{time_delta} seconds'
             self.failed_at = failed_at
@@ -396,31 +368,7 @@ class bookingTimeTest(db.Model):
                 self.failed_number = int(self.failed_number + failed_number)
             db.session.merge(self)
             db.session.commit()
-       
-            
             return
+    
 admin.add_view(ModelView(bookingTimeTest,db.session))
-'''
-class UserSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-       model = User
-       load_instance = True
-class ParkSchema(ma.SQLAlchemySchema):
-    class Meta:
-        model = Park 
-        load_instance = True
-    id = auto_field()
-    park_site = auto_field()
-  
-class SiteSchema(ma.SQLAlchemySchema):
-    class Meta:
-        model = Site
-        load_instance = True
-    id = auto_field()
-    campground = auto_field()
-    inner_campground = auto_field()
-    names = auto_field()
-    park_id = auto_field()
 
-'''
-        

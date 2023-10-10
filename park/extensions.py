@@ -8,16 +8,13 @@ from flask_migrate import Migrate
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_wtf.csrf import CSRFProtect
-#from flask_marshmallow import Marshmallow
-
-
+from flask_caching import Cache
 
 
 
 
 scheduler = APScheduler()
 db = SQLAlchemy()
-#ma = Marshmallow()
 bcrypt = Bcrypt()
 moment = Moment()
 mail = Mail()
@@ -25,5 +22,9 @@ login_manager = LoginManager()
 migrate = Migrate()
 admin = Admin()
 csrf = CSRFProtect()
+cache = Cache()
+
+
+
 
 
