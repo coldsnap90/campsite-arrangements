@@ -3,7 +3,7 @@ from importlib.util import source_from_cache
 from flask import render_template,request,redirect,url_for,jsonify,flash,Blueprint,abort
 from park.extensions import bcrypt,db,mail,Message,scheduler,csrf,cache
 from flask_login import login_user, current_user, logout_user, login_required
-
+import os
 from park.booking import *
 from park.auth.forms import ChoiceForm,signUpForm,updateForm,passwordResetForm,LoginForm,productForm,redirectForm,cancelForm,adminForm,requestResetForm,cancelBookingForm
 from park.auth import auth
@@ -21,7 +21,6 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from datetime import datetime
 import time
-import redis
 stripe.api_key = Config.STRIPE_LIVE_SECRET_KEY
 
 
@@ -544,12 +543,9 @@ def webhook():
             db.session.commit()  
     return{}
         
-#sched.add_job(my_job, 'date', run_date=datetime(2009, 11, 6, 16, 30, 5), args=['text'])
-#,trigger ='interval',hours=1, start_date='2022-11-11 22::30'
 
 def job_date(date_booking):
         if date_booking.month <= 8 and date_booking.month > ((datetime.now().month + 4)%12) and date_booking.year == datetime.now().year:
-            print('1')
             date_booked = f'{date_booking.year}-{date_booking.month-4}-{date_booking.day+1}'
             start_day = f'{date_booked} 06:55:00'
             end_day = f'{date_booked} 19:59:00'
@@ -562,19 +558,16 @@ def job_date(date_booking):
         elif date_booking.month <= ((datetime.now().month + 4)%12) and date_booking.year == datetime.now().year:
 
             if date_booking.day <= datetime.now().day:
-                print('2')
                 date_booked = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day}'
                 start_day = f'{date_booked} 06:53:00'
                 end_day = f'{datetime.now().year}-{datetime.now().month}-{datetime.now().day} 19:59:00'
 
             else:
-                print('3')
                 date_booked = f'{date_booking.year}-{date_booking.month-4}-{date_booking.day}'
                 start_day = f'{date_booked} 06:53:00'
                 end_day = f'{date_booked} 19:59:00'
 
         elif date_booking.year > datetime.now().year:
-            print('4')
             date_booked = f'{date_booking.year}-{date_booking.month-4}-{date_booking.day}'
             start_day = f'{date_booked} 06:53:00'
             end_day = f'{date_booked} 19:59:00'
@@ -595,9 +588,6 @@ def add_task():
     'kann_mem_gold':5,'lann_mem_plat':5,'emon_mem_bronze':15,
     'fmon_mem_silver':10,'gmon_mem_gold':5,'hmon_mem_plat':5,'asingle_bronze':60,
     'bsingle_silver':30,'csingle_gold':15,'dsingle_plat':5}
-    months = {'Jan':'1','Feb':'2','Mar':'3','Apr':'4','May':'5','Jun':'6','Jul':'7','Aug':'8','Sept':'9',
-                 'Oct':'10','Nov':'11','Dec':'12'}
-
 
     sub = str(user_account.subscription)
     acc_scan_num = user_account.scan
@@ -612,20 +602,15 @@ def add_task():
         return render_template('cancel.html',scan = False)
     
     if acc_scan_num == None or scan_num >= acc_scan_num:
-        print('added')
         account_booking = BookingData.query.filter_by(user_id = user_id).filter(BookingData.logged == False).all()
-        print('booking - ',account_booking)
         for i in account_booking:
-            print(i)
             start_day, end_day = job_date(i.arrival_date)
-            print(start_day,end_day)
             scheduler.add_job(jobstore='default',func=schedule_site,trigger = 'interval',
                               args=[user_id,i], id=f'{user_account.id}-{i.park}-{i.campground}-{i.site}-{i.arrival_date}',
                               start_date=start_day,end_date=end_day,minutes =1,max_instances =1)
             i.logged = True
             db.session.merge(i)
             db.session.commit()
-            print('Logged')
 
     else:
         return render_template('cancel.html',scan = False)
@@ -644,25 +629,23 @@ def cancel_sub(*args):
 
 
 def schedule_site(*args):
-    print('scheduling')
     account_id = args[0]
     b_info = args[1]
     with scheduler.app.app_context():
         u_info = User.query.filter_by(id=account_id).first()
-        s_info = 'hello'
-        #s_info = stripe.Customer.retrieve(f'{u_info.cId}')
+        s_info = stripe.Customer.retrieve(f'{u_info.cId}')
         
         try:
             browser = webdriver.Firefox()
         except:
             time.sleep(1)
-            browwer = webdriver.FireFox()
+            browser = webdriver.FireFox()
 
 
         waits = wait(browser,20)
         Action = ActionChains(browser)
         time1 = time.time()
-        book,time2,success,failed_at = reservation(browser,waits,Action,u_info,b_info) #s_info last arg
+        book,time2,success,failed_at = reservation(browser,waits,Action,u_info,b_info,s_info)
         #failure data logging system
         btt = bookingTimeTest(None,datetime.now(),success,failed_at,None,0)
         db.session.add(btt)
@@ -700,9 +683,7 @@ def booking_info(token):
     user_id = User.get_id(current_user)
     user_account = get_cached_user(user_id)
     user_bookings = get_booking_data(user_id)
-    print('boking ',accounts)
     accounts = BookingData.query.filter_by(user_id = current_user.get_id()).first()
-    #user_bookings = BookingData.query.filter_by(user_id = current_user.get_id()).all()
 
     if accounts.token_confirm(token) == True:
         bookingBool= True
@@ -768,47 +749,3 @@ def get_booking_data(userId):
         cache.set('userBooking',bookingData)
         return bookingData
     
-@auth.route('/data',methods =['GET','POST'])
-@login_required
-def datadel():
-    userId = User.get_id(current_user)
-    user_account = get_cached_user(userId)
-    Account = get_booking_data(userId)
-    bookingData = BookingData.query.filter_by(user_id=userId).all()
-    db.session.delete(bookingData)
-    db.session.commit()
-    print(user_account,Account)
-    return render_template('data.html',site=user_account,campground = Account)
-
-    
-@auth.route('/delbooking',methods =['GET','POST'])
-@login_required
-def dataBook():
-    userId = User.get_id(current_user)
-    user_account = get_cached_user(userId)
-    Account = get_booking_data(userId)
-    bookingData = BookingData.query.filter_by(user_id=userId).all()
-    for i in bookingData:
-        db.session.delete(i)
-    db.session.commit()
-    print(user_account,Account)
-    return render_template('data.html',site=user_account,campground = Account)
-
-
-@auth.route('/testBook',methods =['GET','POST'])
-def testBook():
-                
-                '''3 6 12 14'''
-                #start_date=start_day,end_date=end_day start_day = f'{date_booked} 06:53:00'
-                #end_day = f'{date_booked} 19:59:00' 25 18 double
-                data = User.get_id(current_user)
-                newB = BookingData(park ='Porteau Cove',site='26',site_type='Campsite',\
-                                   campground = 'A (Sites 1-37)',inner_campground=None,arrival_date=datetime(2023,10,25).date()
-                ,nights = '1',equiptment = '2 Tents',email = 'cheema_mandy@hotmail.com',password = 'Apple9314!!',
-                party_size='4',contact_num=f'6046141826',booked = False,occupant= True,occupant_first_name='Mandeep',
-                    occupant_last_name = 'Cheemo',occupant_address='7532 Lark st',\
-                        occupant_postal_code='v2v3a3',occupant_phone_num = '6046141826',user_id=data)
-                
-                db.session.add(newB)
-                db.session.commit()
-                return redirect(url_for('auth.add_task'))

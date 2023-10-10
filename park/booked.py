@@ -673,7 +673,7 @@ def login(browser,waits,b_info):
  
 
 
-def reservation(browser,waits,Action,u_info,b_info):
+def reservation(browser,waits,Action,u_info,b_info,s_info):
 
         def mytimer():
             '''threading func to close down browser after timeout'''
@@ -689,7 +689,7 @@ def reservation(browser,waits,Action,u_info,b_info):
         except:
              print('could not thread')
 
-        browser.implicitly_wait(5)
+        browser.implicitly_wait(10)
         doc_ready =wait(browser, 20).until(lambda browser: browser.execute_script\
                                            ('return document.readyState') == 'complete')
         
@@ -775,7 +775,6 @@ def reservation(browser,waits,Action,u_info,b_info):
                 return False,end,s1,x
     
         try:
-                browser.implicitly_wait(5)
                 waits.until(EC.presence_of_element_located((By.ID,'nightsTab'))).click()
                 backspace(Action)
                 night = waits.until(EC.presence_of_element_located((By.ID,'nights-field')))
@@ -790,7 +789,6 @@ def reservation(browser,waits,Action,u_info,b_info):
  
         try:
                 waits.until(EC.presence_of_element_located((By.ID,'equipment-field'))).click()
-                browser.implicitly_wait(5)
         except:
                 end = time.time()
                 s1 = False
@@ -807,7 +805,6 @@ def reservation(browser,waits,Action,u_info,b_info):
                         text.click() 
                         break
                 
-                browser.implicitly_wait(5)
                 sleep(1)
                 counter = 10
                 while counter > 0:
@@ -826,12 +823,9 @@ def reservation(browser,waits,Action,u_info,b_info):
                 return False,end,s1,x
 
         try:
-                browser.implicitly_wait(5)
                 waits.until(EC.presence_of_element_located\
                             ((By.CSS_SELECTOR,'#list-view-button-button > span:nth-child(1)')))
-                browser.implicitly_wait(5)
                 waits.until(EC.presence_of_element_located((By.ID,'mat-tab-label-1-1')))
-                browser.implicitly_wait(5)
         except:
                 end = time.time()
                 s1 = False
@@ -920,7 +914,7 @@ def reservation(browser,waits,Action,u_info,b_info):
         bool_flag = True 
         count = 0
         while bool_flag == True:
-                                    if datetime.now().time():
+                                    if datetime.now().time() >= b_info.arrival_date:
                                         try:
                                             r = 'Reserve'
                                             waits.until(EC.presence_of_element_located\
