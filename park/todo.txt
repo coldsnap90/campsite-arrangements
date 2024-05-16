@@ -1,1 +1,0 @@
-thread pool executor, max instances so memory usage doesnt ger overloaded
