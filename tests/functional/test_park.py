@@ -21,9 +21,8 @@ import pytest_mock
 
 def test_home(app):
 
-            #response = app.get(url_for('auth.login'))
-            #print(response)
-            #assert response.status_code == 200
+            response = app.get(url_for('auth.login'))
+            assert response.status_code == 200
 
             responsed = app.get('/')
             assert b'<title>Home</title>' in responsed.data
@@ -42,11 +41,10 @@ def test_user(mocker):
         mocker.patch()           
                 
 def test_model(app):
-        #user = User()
-        '''
-        #salted_password = bcrypt.generate_password_hash(signUpForm.email_password.data).decode('utf-8')
-        #new_user = User(email = signUpForm.user_email.data,password = salted_password,
-                        #firstName=signUpForm.first_name.data,lastName=signUpForm.last_name.data,confirmed=False,billingAddress=None,
-                        #ostalCode=None,city =None,province = None,country = None,subscription = None,cId=None,sId=None,scan=None,
-                        #sub_day = None,phone_num = None) 
-        '''
+        user = User()
+        salted_password = bcrypt.generate_password_hash(signUpForm.email_password.data).decode('utf-8')
+        new_user = User(email = signUpForm.user_email.data,password = salted_password,
+                        firstName=signUpForm.first_name.data,lastName=signUpForm.last_name.data,confirmed=False,billingAddress=None,
+                        ostalCode=None,city =None,province = None,country = None,subscription = None,cId=None,sId=None,scan=None,
+                        sub_day = None,phone_num = None) 
+   
