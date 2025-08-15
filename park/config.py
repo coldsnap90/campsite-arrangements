@@ -8,7 +8,7 @@ import os
 
 
 class Config:
-    env = 'dev'
+    env = ''
     ADMIN_PASS = os.environ.get('ENV_ADMIN_PASS')
     STRIPE_LIVE_SECRET_KEY = os.environ.get('ENV_STRIPE_SECRET_KEY')
     STRIPE_LIVE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_PUBLIC_KEY')
@@ -17,15 +17,15 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False  
     SCHEDULER_API_ENABLED = True  
   
-    if env == 'pro':
+    if env == 'pro_env':
         ADMIN_PASS = os.environ.get('ADMIN_PASS')
         SQLALCHEMY_DATABASE_URI = os.environ.get('ENV_DATABASE_CONNECT')
         STRIPE_LIVE_SECRET_KEY = os.environ.get('ENV_STRIPE_LIVE_SECRET_KEY')
         STRIPE_LIVE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_LIVE_PUBLIC_KEY')
         SERVER_NAME = "webookcamp.herokuapp.com"
-        SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url=os.environ.get('ENV_STRIPE_PUBLIC_KEY'))}
+        SCHEDULER_JOBSTORES = {"default": SQLAlchemyJobStore(url=os.environ.get('ENV_DATABASE_CONNECT'))}
         SCHEDULER_EXECUTORS = {'default': ThreadPoolExecutor(3),'processpool': ProcessPoolExecutor(3)}
-    elif env == 'dev':
+    elif env == 'dev_env':
         ADMIN_PASS = os.environ.get('ADMIN_PASS')
         SQLALCHEMY_DATABASE_URI = os.environ.get("ENV_LOCAL_DB")
         SERVER_NAME = "127.0.0.1:5000"
