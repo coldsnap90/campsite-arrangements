@@ -499,8 +499,8 @@ def webhook():
 
     payload = request.get_data()
     sig_header = request.environ.get('HTTP_STRIPE_SIGNATURE')
-   
-    endpoint_secret ='whsec_fc62491304b1d48910e4ba792e57f0b8747f3e03f738b7f7b51c3794fb215dac'
+
+    endpoint_secret = Config.ENDPOINT
     event = None
 
     try:
