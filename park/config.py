@@ -12,6 +12,7 @@ class Config:
     ADMIN_PASS = os.environ.get('ENV_ADMIN_PASS')
     STRIPE_LIVE_SECRET_KEY = os.environ.get('ENV_STRIPE_SECRET_KEY')
     STRIPE_LIVE_PUBLIC_KEY = os.environ.get('ENV_STRIPE_PUBLIC_KEY')
+    ENDPOINT_SECRET = os.environ.get("ENV_ENDPOINT_SECRET")
     CSRF_ENABLED = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False  
     SCHEDULER_API_ENABLED = True  
